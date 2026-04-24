@@ -16,6 +16,10 @@ export default function AdminDashboard() {
   const [pendingVendors, setPendingVendors] = useState([]);
   const [allVendors, setAllVendors] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [newCatName, setNewCatName] = useState('');
+  const [newCatIcon, setNewCatIcon] = useState('Box');
+  const [newCatColor, setNewCatColor] = useState('#f97316');
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Stats (Overview)
@@ -70,6 +74,22 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
+  // Fetch Categories for Settings
+  useEffect(() => {
+    if (activeTab === 'settings') {
+      const fetchCategories = async () => {
+        try {
+          const res = await fetch('/api/categories');
+          const data = await res.json();
+          setCategories(data);
+        } catch (error) {
+          console.error('Error fetching categories:', error);
+        }
+      };
+      fetchCategories();
+    }
+  }, [activeTab]);
+
   const updateVendorStatus = async (sellerId, verified) => {
     try {
       const res = await fetch('/api/admin/vendors', {
@@ -97,6 +117,55 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error updating user:', error);
+    }
+  };
+
+  const updateUserStatus = async (userId, isActive) => {
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, isActive })
+      });
+      if (res.ok) {
+        setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive } : u));
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
+    }
+  };
+
+  const handleAddCategory = async (e) => {
+    e.preventDefault();
+    if (!newCatName) return;
+
+    try {
+      const res = await fetch('/api/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCatName, icon: newCatIcon, color: newCatColor })
+      });
+      if (res.ok) {
+        const added = await res.json();
+        setCategories([added, ...categories]);
+        setNewCatName('');
+      } else {
+        alert('Erreur: la catégorie existe peut-être déjà.');
+      }
+    } catch (error) {
+      console.error('Error adding category:', error);
+    }
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (!confirm('Voulez-vous vraiment supprimer cette catégorie ?')) return;
+    try {
+      const res = await fetch(`/api/categories?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setCategories(categories.filter(c => c.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error);
     }
   };
 
@@ -350,9 +419,75 @@ export default function AdminDashboard() {
 
   {activeTab === 'settings' && (
     <div>
-      <h2>Paramètres de la Plateforme</h2>
-      <p>Configuration des frais de livraison globaux, bannières d'accueil et SEO.</p>
-      <div className={styles.loading}>Module en cours de construction...</div>
+      <h2>Paramètres & Configuration</h2>
+      <p style={{ marginBottom: '24px', color: '#64748b' }}>Gérez les catégories de produits, les bannières et les frais globaux.</p>
+      
+      <section className={styles.section} style={{ marginBottom: '32px' }}>
+        <div className={styles.sectionHeader}>
+          <h3>🏷️ Ajouter une Catégorie</h3>
+        </div>
+        <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+          <div style={{ flex: 1, minWidth: '200px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Nom de la catégorie</label>
+            <input 
+              type="text" 
+              value={newCatName} 
+              onChange={e => setNewCatName(e.target.value)} 
+              placeholder="Ex: Électronique" 
+              required
+              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+            />
+          </div>
+          <div style={{ width: '150px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Icône (Lucide)</label>
+            <input 
+              type="text" 
+              value={newCatIcon} 
+              onChange={e => setNewCatIcon(e.target.value)} 
+              placeholder="Ex: Smartphone" 
+              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+            />
+          </div>
+          <div style={{ width: '100px' }}>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Couleur</label>
+            <input 
+              type="color" 
+              value={newCatColor} 
+              onChange={e => setNewCatColor(e.target.value)} 
+              style={{ width: '100%', height: '42px', padding: '0', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+            />
+          </div>
+          <button type="submit" className={styles.btnApprove} style={{ padding: '12px 24px', fontSize: '14px' }}>
+            Ajouter
+          </button>
+        </form>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <h3>📋 Catégories Existantes</h3>
+        </div>
+        <div className={styles.list}>
+          {categories.map(c => (
+            <div key={c.id} className={styles.item}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: c.color || '#f1f5f9', opacity: 0.8 }} />
+                <div>
+                  <h3 style={{ margin: 0 }}>{c.name}</h3>
+                  <small style={{ color: '#64748b' }}>Icône: {c.icon || 'Aucune'} | Produits liés: {c._count?.products || 0}</small>
+                </div>
+              </div>
+              <button 
+                onClick={() => handleDeleteCategory(c.id)} 
+                className={styles.btnReject}
+              >
+                Supprimer
+              </button>
+            </div>
+          ))}
+          {categories.length === 0 && <p className={styles.loading}>Aucune catégorie.</p>}
+        </div>
+      </section>
     </div>
   )}
 

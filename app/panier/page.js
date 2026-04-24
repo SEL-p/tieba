@@ -1,23 +1,40 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { Trash2, Plus, Minus, ShoppingCart, ShieldCheck, Truck, ChevronRight } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import { featuredProducts, formatPrice } from '../data/mockData';
+import { formatPrice } from '../data/mockData';
 import styles from './panier.module.css';
 
-const initialCartItems = featuredProducts.slice(0, 3).map((p, i) => ({
-  ...p,
-  quantity: i === 0 ? 2 : 1,
-}));
-
 export default function PanierPage() {
-  const [items, setItems] = useState(initialCartItems);
+  const { data: session } = useSession();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(false);
 
-  const updateQty = (id, delta) => {
+  useEffect(() => {
+    const fetchCart = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/cart');
+        const data = await res.json();
+        setItems(data);
+      } catch (err) {
+        console.error('Error fetching cart:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    if (session) fetchCart();
+    else setLoading(false);
+  }, [session]);
+
+  const updateQty = async (id, productId, delta) => {
+    // Optimistic update
     setItems(prev =>
       prev.map(item =>
         item.id === id
@@ -25,11 +42,37 @@ export default function PanierPage() {
           : item
       )
     );
+
+    // Backend update
+    try {
+      await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId, quantity: delta }),
+      });
+    } catch (err) {
+      console.error('Update qty error:', err);
+    }
   };
 
-  const removeItem = (id) => setItems(prev => prev.filter(item => item.id !== id));
+  const removeItem = async (id) => {
+    const originalItems = [...items];
+    setItems(prev => prev.filter(item => item.id !== id));
 
-  const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    try {
+      const res = await fetch('/api/cart', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id }),
+      });
+      if (!res.ok) throw new Error();
+    } catch (err) {
+      setItems(originalItems);
+      console.error('Remove item error:', err);
+    }
+  };
+
+  const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
   const delivery = 2500;
   const promoDiscount = promoApplied ? Math.round(subtotal * 0.1) : 0;
   const total = subtotal + delivery - promoDiscount;
@@ -84,20 +127,20 @@ export default function PanierPage() {
                     <input type="checkbox" defaultChecked className={styles.itemCheck} />
 
                     <div className={styles.itemImage}>
-                      <Image src={item.image} alt={item.name} fill sizes="80px" style={{ objectFit: 'cover', borderRadius: '8px' }} />
+                      <Image src={item.product.image} alt={item.product.name} fill sizes="80px" style={{ objectFit: 'cover', borderRadius: '8px' }} />
                     </div>
 
                     <div className={styles.itemDetails}>
-                      <Link href={`/produit/${item.id}`} className={styles.itemName}>{item.name}</Link>
+                      <Link href={`/produit/${item.product.id}`} className={styles.itemName}>{item.product.name}</Link>
                       <div className={styles.itemMeta}>
                         <span className={styles.itemSeller}>
-                          {item.sellerVerified && '✓ '}{item.seller}
+                          {item.product.seller?.businessName || 'Vendeur Tiéba'}
                         </span>
-                        <span className={styles.itemLocation}>📍 {item.location}</span>
+                        <span className={styles.itemLocation}>📍 {item.product.location || 'Côte d\'Ivoire'}</span>
                       </div>
                       <div className={styles.itemStock}>
                         <span className={styles.inStock}>✓ En stock</span>
-                        <span className={styles.minOrder}>Commande min: {item.minOrder}</span>
+                        <span className={styles.minOrder}>Commande min: {item.product.minOrder || '1'}</span>
                       </div>
                     </div>
 
@@ -105,31 +148,26 @@ export default function PanierPage() {
                       <div className={styles.qtyControls}>
                         <button
                           className={styles.qtyBtn}
-                          onClick={() => updateQty(item.id, -1)}
+                          onClick={() => updateQty(item.id, item.product.id, -1)}
                           id={`qty-minus-${item.id}`}
                         >−</button>
                         <span className={styles.qtyValue}>{item.quantity}</span>
                         <button
                           className={styles.qtyBtn}
-                          onClick={() => updateQty(item.id, 1)}
+                          onClick={() => updateQty(item.id, item.product.id, 1)}
                           id={`qty-plus-${item.id}`}
                         >+</button>
                       </div>
                       <div className={styles.itemPrice}>
-                        {formatPrice(item.price * item.quantity)}
+                        {formatPrice(item.product.price * item.quantity)}
                       </div>
-                      {item.originalPrice && (
-                        <div className={styles.itemOriginalPrice}>
-                          {formatPrice(item.originalPrice * item.quantity)}
-                        </div>
-                      )}
                       <button
                         className={styles.removeBtn}
                         onClick={() => removeItem(item.id)}
                         id={`remove-${item.id}`}
                         aria-label="Supprimer"
                       >
-                        🗑
+                        <Trash2 size={18} />
                       </button>
                     </div>
                   </div>

@@ -2,20 +2,50 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { Heart, ShoppingCart, Eye, Star, MapPin, Package, CheckCircle } from 'lucide-react';
 import styles from './ProductCard.module.css';
-import { formatPrice, getDiscount } from '../data/mockData';
+import { formatPrice } from '../data/mockData';
 
 export default function ProductCard({ product }) {
+  const { data: session } = useSession();
   const [wishlist, setWishlist] = useState(false);
-  const discount = getDiscount(product.price, product.originalPrice);
+  const [adding, setAdding] = useState(false);
+  
+  const handleFavorite = async (e) => {
+    e.preventDefault();
+    if (!session) return alert('Veuillez vous connecter');
+    
+    setWishlist(!wishlist);
+    try {
+      await fetch('/api/favorites', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id }),
+      });
+    } catch (err) {
+      console.error('Favorite error:', err);
+    }
+  };
 
-  const badgeClass = {
-    green: 'badge-green',
-    orange: 'badge-orange',
-    gold: 'badge-gold',
-    red: 'badge-red',
-    gray: 'badge-gray',
-  }[product.badgeType] || 'badge-gray';
+  const handleAddToCart = async (e) => {
+    e.preventDefault();
+    if (!session) return alert('Veuillez vous connecter');
+    
+    setAdding(true);
+    try {
+      await fetch('/api/cart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ productId: product.id, quantity: 1 }),
+      });
+      setTimeout(() => setAdding(false), 1500);
+    } catch (err) {
+      setAdding(false);
+    }
+  };
+
+  const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : null;
 
   return (
     <div className={styles.card} id={`product-${product.id}`}>
@@ -44,19 +74,17 @@ export default function ProductCard({ product }) {
         {/* Wishlist */}
         <button
           className={`${styles.wishlistBtn} ${wishlist ? styles.active : ''}`}
-          onClick={() => setWishlist(!wishlist)}
+          onClick={handleFavorite}
           aria-label="Ajouter aux favoris"
           id={`wishlist-${product.id}`}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill={wishlist ? 'currentColor' : 'none'} stroke="currentColor" strokeWidth="2">
-            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-          </svg>
+          <Heart size={18} fill={wishlist ? 'currentColor' : 'none'} />
         </button>
 
         {/* Quick actions overlay */}
         <div className={styles.overlay}>
           <Link href={`/produit/${product.id}`} className={styles.quickView}>
-            👁 Aperçu rapide
+            <Eye size={16} /> Aperçu rapide
           </Link>
         </div>
       </div>
@@ -104,15 +132,13 @@ export default function ProductCard({ product }) {
 
         {/* Add to Cart */}
         <button
-          className={styles.addToCartBtn}
+          className={`${styles.addToCartBtn} ${adding ? styles.added : ''}`}
+          onClick={handleAddToCart}
+          disabled={adding}
           id={`add-cart-${product.id}`}
         >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <path d="M16 10a4 4 0 0 1-8 0"/>
-          </svg>
-          Ajouter au panier
+          {adding ? <CheckCircle size={16} /> : <ShoppingCart size={16} />}
+          {adding ? 'Ajouté !' : 'Ajouter au panier'}
         </button>
       </div>
     </div>

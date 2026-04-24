@@ -14,24 +14,59 @@ export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
   const [pendingVendors, setPendingVendors] = useState([]);
+  const [allVendors, setAllVendors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Fetch Stats (Overview)
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch('/api/admin');
-        const data = await res.json();
-        setStats(data.stats);
-        setPendingVendors(data.pendingVendors);
-      } catch (error) {
-        console.error('Error fetching admin data:', error);
-      } finally {
-        setIsLoading(false);
+    if (activeTab === 'overview') {
+      const fetchStats = async () => {
+        try {
+          setIsLoading(true);
+          const res = await fetch('/api/admin');
+          const data = await res.json();
+          setStats(data.stats);
+          setPendingVendors(data.pendingVendors);
+        } catch (error) {
+          console.error('Error fetching admin data:', error);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchStats();
+    }
+  }, [activeTab]);
+
+  // Fetch All Vendors
+  useEffect(() => {
+    if (activeTab === 'vendors') {
+      const fetchVendors = async () => {
+        try {
+          const res = await fetch('/api/admin/vendors');
+          const data = await res.json();
+          setAllVendors(data);
+        } catch (error) {
+          console.error('Error fetching vendors:', error);
+        }
+      };
+      fetchVendors();
+    }
+  }, [activeTab]);
+
+  const updateVendorStatus = async (sellerId, verified) => {
+    try {
+      const res = await fetch('/api/admin/vendors', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sellerId, verified })
+      });
+      if (res.ok) {
+        setAllVendors(prev => prev.map(v => v.id === sellerId ? { ...v, verified } : v));
       }
-    };
-    fetchData();
-  }, []);
+    } catch (error) {
+      console.error('Error updating vendor:', error);
+    }
+  };
 
   if (isLoading) return <div className={styles.loading}>Chargement de l'administration...</div>;
 
@@ -190,8 +225,48 @@ export default function AdminDashboard() {
   {activeTab === 'vendors' && (
     <div>
       <h2>Gestion des Vendeurs</h2>
-      <p>Validation des RCCM, suspension de comptes et gestion des litiges vendeurs.</p>
-      <div className={styles.loading}>Module en cours de construction...</div>
+      <p style={{ marginBottom: '24px', color: '#64748b' }}>Validation des RCCM, suspension de comptes et gestion des vendeurs de la marketplace.</p>
+      
+      <div className={styles.list}>
+        {allVendors.map(v => (
+          <div key={v.id} className={styles.item}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '48px', height: '48px', borderRadius: '50%', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
+                {v.businessName.charAt(0).toUpperCase()}
+              </div>
+              <div>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {v.businessName} 
+                  {v.verified && <CheckCircle size={14} color="#16a34a" />}
+                </h3>
+                <p>Propriétaire: {v.user?.name} | Email: {v.user?.email}</p>
+                <p>Créé le: {new Date(v.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+            <div className={styles.itemActions}>
+              <button className={styles.btnCheck}>📄 Voir RCCM</button>
+              {!v.verified ? (
+                <button 
+                  className={styles.btnApprove}
+                  onClick={() => updateVendorStatus(v.id, true)}
+                >
+                  Approuver
+                </button>
+              ) : (
+                <button 
+                  className={styles.btnReject}
+                  onClick={() => updateVendorStatus(v.id, false)}
+                >
+                  Suspendre
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+        {allVendors.length === 0 && (
+          <div className={styles.loading}>Aucun vendeur trouvé.</div>
+        )}
+      </div>
     </div>
   )}
 

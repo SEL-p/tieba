@@ -47,6 +47,14 @@ export default function ProductCard({ product }) {
 
   const discount = product.originalPrice ? Math.round((1 - product.price / product.originalPrice) * 100) : null;
 
+  const badgeClass = {
+    green: 'badge-green',
+    orange: 'badge-orange',
+    gold: 'badge-gold',
+    red: 'badge-red',
+    gray: 'badge-gray',
+  }[product.badgeType] || 'badge-gray';
+
   return (
     <div className={styles.card} id={`product-${product.id}`}>
       {/* Image */}

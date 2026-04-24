@@ -1,0 +1,225 @@
+.container {
+  min-height: calc(100vh - 200px);
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.signupCard {
+  width: 100%;
+  max-width: 550px;
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.signupHeader {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.signupHeader h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.signupHeader p {
+  color: #64748b;
+  font-size: 15px;
+}
+
+.errorBox {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #dc2626;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  font-size: 14px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Role Selection Grid */
+.roleGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.roleCard {
+  border: 2px solid #f1f5f9;
+  border-radius: 12px;
+  padding: 16px 8px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s;
+  background: white;
+}
+
+.roleCard:hover {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.roleActive {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+
+.roleIcon {
+  color: #64748b;
+  margin-bottom: 8px;
+}
+
+.roleActive .roleIcon {
+  color: #f97316;
+}
+
+.roleLabel {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+
+.roleDesc {
+  font-size: 11px;
+  color: #94a3b8;
+}
+
+.check {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background: #f97316;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.inputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.inputIcon {
+  position: absolute;
+  left: 12px;
+  color: #94a3b8;
+}
+
+.inputWrapper input {
+  width: 100%;
+  padding: 12px 12px 12px 42px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  font-size: 15px;
+  transition: all 0.2s;
+}
+
+.inputWrapper input:focus {
+  outline: none;
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.1);
+}
+
+.submitBtn {
+  background: #16a34a; /* Green for signup */
+  color: white;
+  padding: 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.submitBtn:hover {
+  background: #15803d;
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.terms {
+  margin-top: 24px;
+  font-size: 12px;
+  color: #94a3b8;
+  text-align: center;
+  line-height: 1.6;
+}
+
+.terms a {
+  color: #64748b;
+  text-decoration: underline;
+}
+
+.footer {
+  margin-top: 32px;
+  text-align: center;
+  font-size: 14px;
+  color: #64748b;
+  padding-top: 24px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.footer a {
+  color: #16a34a;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.footer a:hover {
+  text-decoration: underline;
+}

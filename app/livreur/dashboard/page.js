@@ -6,6 +6,7 @@ import Footer from '../../components/Footer';
 import styles from './livreur.module.css';
 
 export default function DeliveryDashboard() {
+  const { data: session } = useSession();
   const [activeMissions, setActiveMissions] = useState([]);
   const [availableMissions, setAvailableMissions] = useState([]);
   const [status, setStatus] = useState('ACTIF');

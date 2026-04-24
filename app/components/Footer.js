@@ -1,3 +1,4 @@
+'use client';
 import Link from 'next/link';
 import { 
   Truck, Lock, BadgeCheck, RotateCcw, Headset

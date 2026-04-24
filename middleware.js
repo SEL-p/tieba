@@ -10,7 +10,7 @@ export default withAuth(
     if (path.startsWith("/admin") && token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
-    if (path.startsWith("/vendeur/dashboard") && token?.role !== "VENDEUR") {
+    if ((path.startsWith("/vendeur/dashboard") || path.startsWith("/vendeur/produits")) && token?.role !== "VENDEUR") {
       return NextResponse.redirect(new URL("/", req.url));
     }
     if (path.startsWith("/livreur/dashboard") && token?.role !== "LIVREUR") {
@@ -28,6 +28,7 @@ export const config = {
   matcher: [
     "/admin/:path*",
     "/vendeur/dashboard/:path*",
+    "/vendeur/produits/:path*",
     "/livreur/dashboard/:path*",
     "/dashboard/:path*",
   ],

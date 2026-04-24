@@ -65,8 +65,8 @@ export default function ProductCard({ product }) {
       <div className={styles.content}>
         {/* Seller */}
         <div className={styles.seller}>
-          <span className={styles.sellerName}>{product.seller}</span>
-          {product.sellerVerified && (
+          <span className={styles.sellerName}>{product.seller?.businessName || 'Vendeur Tieba'}</span>
+          {product.seller?.verified && (
             <span className={styles.verified} title="Vendeur vérifié">✓</span>
           )}
         </div>
@@ -84,8 +84,8 @@ export default function ProductCard({ product }) {
             ))}
           </div>
           <span className={styles.ratingNum}>{product.rating}</span>
-          <span className={styles.reviews}>({product.reviews.toLocaleString()})</span>
-          <span className={styles.sales}>·  {product.sales.toLocaleString()} vendus</span>
+          <span className={styles.reviews}>({(product.reviewsCount || 0).toLocaleString()})</span>
+          <span className={styles.sales}>·  {(product.salesCount || 0).toLocaleString()} vendus</span>
         </div>
 
         {/* Price */}

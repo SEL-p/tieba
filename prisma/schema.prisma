@@ -11,29 +11,57 @@ model User {
   id            String    @id @default(cuid())
   name          String?
   email         String?   @unique
+  phone         String?   @unique
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String    @default("USER") // USER, SELLER, ADMIN
+  role          String    @default("ACHETEUR") // ACHETEUR, VENDEUR, LIVREUR, ADMIN
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
+  
+  // Relations
   orders        Order[]
   seller        Seller?
+  livreur       Livreur?
 }
 
 model Seller {
-  id          String   @id @default(cuid())
-  userId      String   @unique
-  user        User     @relation(fields: [userId], references: [id])
-  businessName String
-  description String?
-  category    String?
-  verified    Boolean  @default(false)
-  location    String?
-  rating      Float    @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  products    Product[]
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  businessName  String
+  description   String?
+  category      String?
+  verified      Boolean  @default(false)
+  location      String?
+  rating        Float    @default(0)
+  
+  // Business details
+  registrationNumber String? // Registre de commerce
+  productTypes      String?  // Types de produits
+  deliveryType      String   @default("TIÉBA") // VENDEUR, TIÉBA, COLLECT
+  
+  // Subscription
+  subscriptionPlan  String   @default("STARTER") // STARTER, BUSINESS, PREMIUM
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  products      Product[]
+}
+
+model Livreur {
+  id            String   @id @default(cuid())
+  userId        String   @unique
+  user          User     @relation(fields: [userId], references: [id])
+  status        String   @default("INACTIF") // ACTIF, INACTIF, EN_LIVRAISON
+  vehicleType   String?  // Moto, Vélo, Voiture
+  rating        Float    @default(0)
+  totalEarnings Float    @default(0)
+  
+  missions      DeliveryMission[]
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
 
 model Category {
@@ -70,14 +98,26 @@ model Product {
 }
 
 model Order {
-  id        String      @id @default(cuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  status    String      @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
-  total     Float
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
-  items     OrderItem[]
+  id              String      @id @default(cuid())
+  userId          String
+  user            User        @relation(fields: [userId], references: [id])
+  status          String      @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
+  
+  // Financials
+  subtotal        Float
+  deliveryFee     Float       @default(0)
+  platformFee     Float       @default(0) // 2% commission on sale
+  deliveryComm    Float       @default(0) // 2% commission on delivery
+  total           Float
+  
+  paymentMethod   String      @default("OM") // OM (Orange), WAVE, MTN, CASH
+  paymentStatus   String      @default("UNPAID")
+  
+  createdAt       DateTime    @default(now())
+  updatedAt       DateTime    @updatedAt
+  
+  items           OrderItem[]
+  mission         DeliveryMission?
 }
 
 model OrderItem {
@@ -88,4 +128,18 @@ model OrderItem {
   product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+}
+
+model DeliveryMission {
+  id            String   @id @default(cuid())
+  orderId       String   @unique
+  order         Order    @relation(fields: [orderId], references: [id])
+  livreurId     String?
+  livreur       Livreur? @relation(fields: [livreurId], references: [id])
+  status        String   @default("WAITING") // WAITING, ACCEPTED, PICKED_UP, DELIVERED, FAILED
+  pickupAddress String?
+  deliveryAddress String
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }

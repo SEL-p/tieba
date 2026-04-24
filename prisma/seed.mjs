@@ -2,7 +2,7 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Seeding database...');
+  console.log('Seeding database with Tiéba Platform V1 data...');
 
   // 1. Create Categories
   const categoriesData = [
@@ -23,32 +23,72 @@ async function main() {
       create: cat,
     });
   }
-  console.log('Categories seeded.');
 
-  // 2. Create a default User/Seller
-  const user = await prisma.user.upsert({
+  // 2. Create Users for each role
+  
+  // ADMIN
+  const admin = await prisma.user.upsert({
     where: { email: 'admin@tieba.market' },
     update: {},
     create: {
-      name: 'Admin Tieba',
+      name: 'Admin Tiéba',
       email: 'admin@tieba.market',
       role: 'ADMIN',
     },
   });
 
-  const seller = await prisma.seller.upsert({
-    where: { userId: user.id },
+  // VENDEUR
+  const vendorUser = await prisma.user.upsert({
+    where: { email: 'vendeur@tieba.market' },
     update: {},
     create: {
-      userId: user.id,
-      businessName: 'Tieba Official Store',
-      verified: true,
-      location: 'Abidjan',
+      name: 'Yao Kouassi',
+      email: 'vendeur@tieba.market',
+      phone: '+2250707070707',
+      role: 'VENDEUR',
     },
   });
-  console.log('Default user/seller seeded.');
 
-  // 3. Create Products
+  const seller = await prisma.seller.upsert({
+    where: { userId: vendorUser.id },
+    update: {},
+    create: {
+      userId: vendorUser.id,
+      businessName: 'Kouassi Cacao & Co',
+      description: 'Producteur de cacao certifié depuis 20 ans.',
+      verified: true,
+      location: 'Yamoussoukro',
+      registrationNumber: 'CI-ABJ-03-2024-B12-12345',
+      productTypes: 'Agricole, Cacao, Café',
+      subscriptionPlan: 'BUSINESS',
+      deliveryType: 'TIÉBA',
+    },
+  });
+
+  // LIVREUR
+  const deliveryUser = await prisma.user.upsert({
+    where: { email: 'livreur@tieba.market' },
+    update: {},
+    create: {
+      name: 'Moussa Traoré',
+      email: 'livreur@tieba.market',
+      phone: '+2250505050505',
+      role: 'LIVREUR',
+    },
+  });
+
+  await prisma.livreur.upsert({
+    where: { userId: deliveryUser.id },
+    update: {},
+    create: {
+      userId: deliveryUser.id,
+      status: 'ACTIF',
+      vehicleType: 'Moto',
+      rating: 4.9,
+    },
+  });
+
+  // 3. Create Products for the vendor
   const productsData = [
     {
       name: 'Cacao en Fèves Premium – Sac 50kg',
@@ -65,22 +105,6 @@ async function main() {
       location: 'Yamoussoukro',
       badge: 'Certifié Bio',
       badgeType: 'green',
-    },
-    {
-      name: 'Pagne Wax Africain Haute Qualité – 6 Yards',
-      price: 12500,
-      originalPrice: 18000,
-      image: '/category_textile.png',
-      categoryId: 'textile',
-      sellerId: seller.id,
-      rating: 4.9,
-      reviewsCount: 892,
-      salesCount: 3200,
-      inStock: true,
-      minOrder: '1 pièce',
-      location: 'Abidjan',
-      badge: 'Meilleure Vente',
-      badgeType: 'orange',
     },
     {
       name: 'Noix de Cajou Brutes – Sac 25kg Export',
@@ -110,7 +134,8 @@ async function main() {
       });
     }
   }
-  console.log('Products seeded.');
+
+  console.log('Seeding completed successfully.');
 }
 
 main()

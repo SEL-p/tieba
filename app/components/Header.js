@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
 import styles from './Header.module.css';
 
 const categories = [
@@ -15,6 +16,7 @@ const categories = [
 ];
 
 export default function Header() {
+  const { data: session } = useSession();
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -35,11 +37,17 @@ export default function Header() {
           <div className={styles.topBannerInner}>
             <span>🇨🇮 Livraison dans toute la Côte d'Ivoire &nbsp;|&nbsp; 📞 +225 07 00 00 00 &nbsp;|&nbsp; ✉️ contact@tiebamarket.ci</span>
             <div className={styles.topLinks}>
-              <Link href="/vendeur">Devenir Vendeur</Link>
+              {session?.user?.role === 'VENDEUR' && <Link href="/vendeur/dashboard">📊 Dashboard Vendeur</Link>}
+              {session?.user?.role === 'LIVREUR' && <Link href="/livreur/dashboard">🚴 Espace Livreur</Link>}
+              {!session && <Link href="/vendeur">Devenir Vendeur</Link>}
               <span className={styles.dot}>·</span>
               <Link href="/aide">Aide</Link>
               <span className={styles.dot}>·</span>
-              <Link href="/compte">Mon Compte</Link>
+              {session ? (
+                <button onClick={() => signOut()} className={styles.logoutBtn}>Déconnexion</button>
+              ) : (
+                <Link href="/compte">Mon Compte</Link>
+              )}
             </div>
           </div>
         </div>
@@ -103,8 +111,13 @@ export default function Header() {
                   </svg>
                 </div>
                 <div className={styles.actionLabel}>
-                  <span className={styles.actionSub}>Bonjour 👋</span>
-                  <span className={styles.actionMain}>Mon Compte</span>
+                  <span className={styles.actionSub}>
+                    {session ? `Bonjour, ${session.user.name.split(' ')[0]} 👋` : 'Bonjour 👋'}
+                  </span>
+                  <span className={styles.actionMain}>
+                    {session?.user?.role === 'VENDEUR' ? 'Dashboard' : 
+                     session?.user?.role === 'LIVREUR' ? 'Missions' : 'Mon Compte'}
+                  </span>
                 </div>
               </Link>
 

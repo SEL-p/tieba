@@ -1,5 +1,5 @@
-﻿import ComingSoon from '../components/ComingSoon';
+import ComingSoon from '../components/ComingSoon';
 
 export default function Page() {
-  return <ComingSoon title='Protection de l'Acheteur' />;
+  return <ComingSoon title="Protection de l'Acheteur" />;
 }

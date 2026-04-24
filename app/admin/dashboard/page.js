@@ -1,22 +1,36 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { 
+  Users, ShoppingBag, DollarSign, AlertCircle, 
+  CheckCircle, XCircle, FileText, Activity 
+} from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from './admin.module.css';
 
 export default function AdminDashboard() {
-  const [stats, setStats] = useState({
-    totalSales: 45200000,
-    totalCommissions: 904000,
-    pendingVendors: 12,
-    activeLivreurs: 45,
-    disputes: 3
-  });
+  const [stats, setStats] = useState(null);
+  const [pendingVendors, setPendingVendors] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [pendingVendors, setPendingVendors] = useState([
-    { id: 1, name: 'Samba Diop', store: 'Diop Textiles', date: '2024-04-23', docs: 'Vérifiés' },
-    { id: 2, name: 'Grace Amoin', store: 'Beauté Naturelle', date: '2024-04-22', docs: 'En attente' },
-  ]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        const res = await fetch('/api/admin');
+        const data = await res.json();
+        setStats(data.stats);
+        setPendingVendors(data.pendingVendors);
+      } catch (error) {
+        console.error('Error fetching admin data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (isLoading) return <div className={styles.loading}>Chargement de l'administration...</div>;
 
   return (
     <>

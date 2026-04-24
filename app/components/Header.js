@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { 
   Search, User, Heart, ShoppingBag, Menu, ChevronDown, 
@@ -24,6 +25,14 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/recherche?q=${encodeURIComponent(searchQuery)}`);
+    }
+  };
   const [cartCount] = useState(3);
   const [wishlistCount] = useState(7);
 
@@ -85,19 +94,19 @@ export default function Header() {
                     <option key={c.name} value={c.name}>{c.name}</option>
                   ))}
                 </select>
-                <div className={styles.searchDivider}></div>
-                <input
-                  type="text"
-                  id="search-input"
-                  placeholder="Rechercher sur Tiéba Market..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className={styles.searchInput}
-                />
-                <button className={styles.searchBtn} aria-label="Rechercher">
-                  <Search size={22} />
-                  <span>Rechercher</span>
-                </button>
+                <form className={styles.searchBar} onSubmit={handleSearch}>
+                  <input
+                    type="text"
+                    placeholder="Rechercher des produits, des fournisseurs..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                  <button type="submit" className={styles.searchBtn} aria-label="Rechercher">
+                    <Search size={22} />
+                    <span>Rechercher</span>
+                  </button>
+                </form>
               </div>
             </div>
 

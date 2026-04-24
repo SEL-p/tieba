@@ -14,28 +14,31 @@ export default function VendorDashboard() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // In a real app, we'd fetch this from /api/vendor/profile
-    // Mocking for now based on our seed data
-    setTimeout(() => {
-      setVendorData({
-        businessName: 'Kouassi Cacao & Co',
-        plan: 'BUSINESS',
-        balance: 1250000,
-        salesCount: 124,
-        activeOrders: 8,
-        rating: 4.8,
-        products: [
-          { id: 1, name: 'Cacao en Fèves Premium', stock: 45, price: 85000, status: 'Active' },
-          { id: 2, name: 'Noix de Cajou Brutes', stock: 12, price: 42000, status: 'Active' },
-        ],
-        recentOrders: [
-          { id: 'ORD-5421', customer: 'Jean Dupont', total: 85000, status: 'En préparation', date: 'Aujourd\'hui, 10:24' },
-          { id: 'ORD-5420', customer: 'Marie Koffi', total: 12500, status: 'Expédié', date: 'Hier, 16:45' },
-        ]
-      });
-      setIsLoading(false);
-    }, 1000);
-  }, []);
+    if (session?.user?.id) {
+      const fetchVendorData = async () => {
+        try {
+          setIsLoading(true);
+          const res = await fetch(`/api/products?sellerId=${session.user.id}`);
+          const products = await res.json();
+          
+          setVendorData({
+            plan: 'BUSINESS',
+            balance: 0,
+            salesCount: 0,
+            activeOrders: 0,
+            rating: 5.0,
+            products: products,
+            recentOrders: []
+          });
+        } catch (err) {
+          console.error('Error fetching vendor products:', err);
+        } finally {
+          setIsLoading(false);
+        }
+      };
+      fetchVendorData();
+    }
+  }, [session]);
 
   if (isLoading) return <div className={styles.loading}>Chargement du dashboard...</div>;
 

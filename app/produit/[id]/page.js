@@ -1,27 +1,56 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect, use } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { use } from 'react';
+import { 
+  ShieldCheck, ArrowLeftRight, Lock, 
+  Star, MessageCircle, Store, Truck, 
+  ChevronRight, Minus, Plus, ShoppingCart, Zap, Heart,
+  MapPin, Package, CheckCircle
+} from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ProductCard from '../../components/ProductCard';
-import { featuredProducts, formatPrice, getDiscount } from '../../data/mockData';
+import { formatPrice } from '../../data/mockData';
 import styles from './produit.module.css';
 
 export default function ProduitPage({ params }) {
   const { id } = use(params);
-  const product = featuredProducts.find(p => p.id === parseInt(id)) || featuredProducts[0];
-  const related = featuredProducts.filter(p => p.id !== product.id).slice(0, 4);
-
+  const [product, setProduct] = useState(null);
+  const [related, setRelated] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(0);
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState('description');
   const [addedToCart, setAddedToCart] = useState(false);
 
-  const images = [product.image, '/category_cocoa.png', '/category_textile.png', '/category_cashew.png'];
-  const discount = getDiscount(product.price, product.originalPrice);
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/products/${id}`);
+        const data = await res.json();
+        setProduct(data);
 
+        if (data.categoryId) {
+          const relatedRes = await fetch(`/api/products?categoryId=${data.categoryId}`);
+          const relatedData = await relatedRes.json();
+          setRelated(relatedData.filter(p => p.id != id).slice(0, 4));
+        }
+      } catch (err) {
+        console.error('Error fetching product:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchProduct();
+  }, [id]);
+
+  if (loading) return <div className={styles.loading}>Chargement du produit...</div>;
+  if (!product) return <div className={styles.error}>Produit non trouvé.</div>;
+
+  const images = [product.image, '/category_cocoa.png', '/category_textile.png', '/category_cashew.png'];
+  
   const handleAddToCart = () => {
     setAddedToCart(true);
     setTimeout(() => setAddedToCart(false), 2000);
@@ -35,10 +64,10 @@ export default function ProduitPage({ params }) {
           {/* Breadcrumb */}
           <nav className={styles.breadcrumb} aria-label="Fil d'Ariane">
             <Link href="/">Accueil</Link>
-            <span>›</span>
-            <Link href={`/categories/${product.category}`}>{product.category}</Link>
-            <span>›</span>
-            <span>{product.name.substring(0, 40)}...</span>
+            <ChevronRight size={14} />
+            <Link href={`/categories/${product.categoryId}`}>{product.category || 'Catégorie'}</Link>
+            <ChevronRight size={14} />
+            <span>{product.name}</span>
           </nav>
 
           {/* Main Product Section */}
@@ -54,9 +83,6 @@ export default function ProduitPage({ params }) {
                   style={{ objectFit: 'cover' }}
                   priority
                 />
-                {discount && (
-                  <div className={styles.imageDiscount}>−{discount}%</div>
-                )}
               </div>
               <div className={styles.thumbnails}>
                 {images.map((img, i) => (
@@ -78,10 +104,10 @@ export default function ProduitPage({ params }) {
               {/* Seller & badges */}
               <div className={styles.sellerRow}>
                 <div className={styles.sellerBadge}>
-                  {product.sellerVerified && <span className={styles.verifiedIcon}>✓</span>}
-                  <span>{product.seller}</span>
+                  <BadgeCheck size={16} className={styles.verifiedIcon} />
+                  <span>{product.seller?.businessName || 'Vendeur Tiéba'}</span>
                 </div>
-                <span className="badge badge-orange">{product.badge}</span>
+                <span className="badge badge-orange">Gros & Détail</span>
               </div>
 
               <h1 className={styles.productTitle}>{product.name}</h1>
@@ -90,23 +116,17 @@ export default function ProduitPage({ params }) {
               <div className={styles.ratingSection}>
                 <div className={styles.stars}>
                   {[1,2,3,4,5].map(s => (
-                    <span key={s} style={{ color: s <= Math.round(product.rating) ? '#F59E0B' : '#E5E7EB', fontSize: '20px' }}>★</span>
+                    <Star key={s} size={18} fill={s <= 4 ? '#F59E0B' : 'transparent'} color={s <= 4 ? '#F59E0B' : '#E5E7EB'} />
                   ))}
                 </div>
-                <span className={styles.ratingNum}>{product.rating}</span>
-                <span className={styles.reviewCount}>({product.reviews.toLocaleString()} avis)</span>
-                <span className={styles.salesCount}>{product.sales.toLocaleString()} vendus</span>
+                <span className={styles.ratingNum}>4.0</span>
+                <span className={styles.reviewCount}>(24 avis)</span>
+                <span className={styles.salesCount}>150+ vendus</span>
               </div>
 
               {/* Price */}
               <div className={styles.priceSection}>
                 <span className={styles.price}>{formatPrice(product.price)}</span>
-                {product.originalPrice && (
-                  <>
-                    <span className={styles.originalPrice}>{formatPrice(product.originalPrice)}</span>
-                    <span className={styles.savingsTag}>Économie: {formatPrice(product.originalPrice - product.price)}</span>
-                  </>
-                )}
               </div>
 
               {/* Key info */}
@@ -153,10 +173,12 @@ export default function ProduitPage({ params }) {
                     onClick={handleAddToCart}
                     id="add-to-cart-btn"
                   >
-                    {addedToCart ? '✓ Ajouté au panier !' : '🛒 Ajouter au panier'}
+                    {addedToCart ? <CheckCircle size={20} /> : <ShoppingCart size={20} />}
+                    {addedToCart ? 'Ajouté !' : 'Ajouter au panier'}
                   </button>
                   <button className={styles.buyNowBtn} id="buy-now-btn">
-                    ⚡ Acheter maintenant
+                    <Zap size={20} />
+                    Acheter maintenant
                   </button>
                 </div>
 

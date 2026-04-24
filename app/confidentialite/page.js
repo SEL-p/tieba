@@ -1,5 +1,5 @@
-import ComingSoon from '../components/ComingSoon';
+﻿import ComingSoon from '../components/ComingSoon';
 
 export default function Page() {
-  return <ComingSoon title='Politique de Confidentialit�' />;
+  return <ComingSoon title='Politique de Confidentialité' />;
 }

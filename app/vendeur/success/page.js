@@ -1,5 +1,5 @@
-import ComingSoon from '../../components/ComingSoon';
+ï»¿import ComingSoon from '../../components/ComingSoon';
 
 export default function Page() {
-  return <ComingSoon title='Succès Vendeurs Tiéba' />;
+  return <ComingSoon title='SuccÃ¨s Vendeurs TiÃ©ba' />;
 }

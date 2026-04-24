@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from './dashboard.module.css';
@@ -83,6 +83,13 @@ export default function VendorDashboard() {
               onClick={() => setActiveTab('settings')}
             >
               ⚙️ Paramètres
+            </button>
+            <button 
+              className={styles.navItem}
+              onClick={() => signOut({ callbackUrl: '/' })}
+              style={{ marginTop: 'auto', color: '#ef4444' }}
+            >
+              🚪 Se déconnecter
             </button>
           </nav>
 

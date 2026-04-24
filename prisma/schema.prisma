@@ -15,131 +15,116 @@ model User {
   emailVerified DateTime?
   image         String?
   password      String?
-  role          String    @default("ACHETEUR") // ACHETEUR, VENDEUR, LIVREUR, ADMIN
+  role          String    @default("ACHETEUR")
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
-  
-  // Relations
+  livreur       Livreur?
   orders        Order[]
   seller        Seller?
-  livreur       Livreur?
 }
 
 model Seller {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
-  businessName  String
-  description   String?
-  category      String?
-  verified      Boolean  @default(false)
-  location      String?
-  rating        Float    @default(0)
-  
-  // Business details
-  registrationNumber String? // Registre de commerce
-  productTypes      String?  // Types de produits
-  deliveryType      String   @default("TIÉBA") // VENDEUR, TIÉBA, COLLECT
-  
-  // Subscription
-  subscriptionPlan  String   @default("STARTER") // STARTER, BUSINESS, PREMIUM
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  products      Product[]
+  id                 String    @id @default(cuid())
+  userId             String    @unique
+  businessName       String
+  description        String?
+  category           String?
+  verified           Boolean   @default(false)
+  location           String?
+  rating             Float     @default(0)
+  registrationNumber String?
+  productTypes       String?
+  deliveryType       String    @default("TIÉBA")
+  subscriptionPlan   String    @default("STARTER")
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+  products           Product[]
+  user               User      @relation(fields: [userId], references: [id])
 }
 
 model Livreur {
-  id            String   @id @default(cuid())
-  userId        String   @unique
-  user          User     @relation(fields: [userId], references: [id])
-  status        String   @default("INACTIF") // ACTIF, INACTIF, EN_LIVRAISON
-  vehicleType   String?  // Moto, Vélo, Voiture
-  rating        Float    @default(0)
-  totalEarnings Float    @default(0)
-  
+  id            String            @id @default(cuid())
+  userId        String            @unique
+  status        String            @default("INACTIF")
+  vehicleType   String?
+  rating        Float             @default(0)
+  totalEarnings Float             @default(0)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
   missions      DeliveryMission[]
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  user          User              @relation(fields: [userId], references: [id])
 }
 
 model Category {
-  id          String    @id @default(cuid())
-  name        String    @unique
-  icon        String?
-  image       String?
-  color       String?
-  products    Product[]
+  id       String    @id @default(cuid())
+  name     String    @unique
+  icon     String?
+  image    String?
+  color    String?
+  products Product[]
 }
 
 model Product {
-  id            String   @id @default(cuid())
+  id            String      @id @default(cuid())
   name          String
   description   String?
   price         Float
   originalPrice Float?
   image         String?
   categoryId    String
-  category      Category @relation(fields: [categoryId], references: [id])
   sellerId      String
-  seller        Seller   @relation(fields: [sellerId], references: [id])
-  rating        Float    @default(0)
-  reviewsCount  Int      @default(0)
-  salesCount    Int      @default(0)
-  inStock       Boolean  @default(true)
+  rating        Float       @default(0)
+  reviewsCount  Int         @default(0)
+  salesCount    Int         @default(0)
+  inStock       Boolean     @default(true)
   minOrder      String?
   location      String?
   badge         String?
   badgeType     String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
   orderItems    OrderItem[]
+  seller        Seller      @relation(fields: [sellerId], references: [id])
+  category      Category    @relation(fields: [categoryId], references: [id])
 }
 
 model Order {
-  id              String      @id @default(cuid())
-  userId          String
-  user            User        @relation(fields: [userId], references: [id])
-  status          String      @default("PENDING") // PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED
-  
-  // Financials
-  subtotal        Float
-  deliveryFee     Float       @default(0)
-  platformFee     Float       @default(0) // 2% commission on sale
-  deliveryComm    Float       @default(0) // 2% commission on delivery
-  total           Float
-  
-  paymentMethod   String      @default("OM") // OM (Orange), WAVE, MTN, CASH
-  paymentStatus   String      @default("UNPAID")
-  
-  createdAt       DateTime    @default(now())
-  updatedAt       DateTime    @updatedAt
-  
-  items           OrderItem[]
-  mission         DeliveryMission?
+  id            String           @id @default(cuid())
+  userId        String
+  status        String           @default("PENDING")
+  subtotal      Float
+  deliveryFee   Float            @default(0)
+  platformFee   Float            @default(0)
+  deliveryComm  Float            @default(0)
+  total         Float
+  paymentMethod String           @default("OM")
+  paymentStatus String           @default("UNPAID")
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  mission       DeliveryMission?
+  user          User             @relation(fields: [userId], references: [id])
+  items         OrderItem[]
 }
 
 model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
-  order     Order   @relation(fields: [orderId], references: [id])
   productId String
-  product   Product @relation(fields: [productId], references: [id])
   quantity  Int
   price     Float
+  product   Product @relation(fields: [productId], references: [id])
+  order     Order   @relation(fields: [orderId], references: [id])
 }
 
 model DeliveryMission {
-  id            String   @id @default(cuid())
-  orderId       String   @unique
-  order         Order    @relation(fields: [orderId], references: [id])
-  livreurId     String?
-  livreur       Livreur? @relation(fields: [livreurId], references: [id])
-  status        String   @default("WAITING") // WAITING, ACCEPTED, PICKED_UP, DELIVERED, FAILED
-  pickupAddress String?
+  id              String   @id @default(cuid())
+  orderId         String   @unique
+  livreurId       String?
+  status          String   @default("WAITING")
+  pickupAddress   String?
   deliveryAddress String
-  
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  livreur         Livreur? @relation(fields: [livreurId], references: [id])
+  order           Order    @relation(fields: [orderId], references: [id])
 }

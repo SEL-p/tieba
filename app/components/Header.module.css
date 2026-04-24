@@ -27,6 +27,21 @@
 
 .dot { color: #6B7280; }
 
+.logoutBtn {
+  background: none;
+  border: none;
+  color: #D1D5DB;
+  font-size: 12px;
+  font-family: inherit;
+  cursor: pointer;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.logoutBtn:hover {
+  color: var(--orange-light);
+}
+
 .header {
   background: var(--white);
   border-bottom: 1px solid var(--border);

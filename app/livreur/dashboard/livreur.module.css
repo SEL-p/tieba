@@ -70,6 +70,28 @@
   padding: 0;
 }
 
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+}
+
+.btnLogout {
+  background: #fee2e2;
+  color: #991b1b;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btnLogout:hover {
+  background: #fecaca;
+}
+
 .quickStats {
   display: flex;
   gap: 32px;

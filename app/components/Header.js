@@ -44,7 +44,7 @@ export default function Header() {
               <Link href="/aide">Aide</Link>
               <span className={styles.dot}>·</span>
               {session ? (
-                <button onClick={() => signOut()} className={styles.logoutBtn}>Déconnexion</button>
+                <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>Se déconnecter</button>
               ) : (
                 <Link href="/compte">Mon Compte</Link>
               )}

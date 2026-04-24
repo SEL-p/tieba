@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { featuredProducts, formatPrice } from '../data/mockData';
@@ -70,7 +71,11 @@ export default function ComptePage() {
                     {tab.label.split(' ').slice(1).join(' ')}
                   </button>
                 ))}
-                <button className={`${styles.sideNavItem} ${styles.logoutBtn}`} id="logout-btn">
+                <button 
+                  className={`${styles.sideNavItem} ${styles.logoutBtn}`} 
+                  id="logout-btn"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                >
                   <span className={styles.navIcon}>🚪</span>
                   Se déconnecter
                 </button>

@@ -1,6 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from './livreur.module.css';
@@ -46,15 +46,23 @@ export default function DeliveryDashboard() {
                 </div>
               </div>
             </div>
-            <div className={styles.quickStats}>
-              <div className={styles.quickStat}>
-                <span>Gains Totaux</span>
-                <strong>{stats.earnings.toLocaleString()} FCFA</strong>
+            <div className={styles.headerRight}>
+              <div className={styles.quickStats}>
+                <div className={styles.quickStat}>
+                  <span>Gains Totaux</span>
+                  <strong>{stats.earnings.toLocaleString()} FCFA</strong>
+                </div>
+                <div className={styles.quickStat}>
+                  <span>Livraisons</span>
+                  <strong>{stats.completed}</strong>
+                </div>
               </div>
-              <div className={styles.quickStat}>
-                <span>Livraisons</span>
-                <strong>{stats.completed}</strong>
-              </div>
+              <button 
+                onClick={() => signOut({ callbackUrl: '/' })} 
+                className={styles.btnLogout}
+              >
+                Se déconnecter
+              </button>
             </div>
           </header>
 

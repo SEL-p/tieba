@@ -2,6 +2,11 @@
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { 
+  ShieldCheck, Globe, BadgeCheck, 
+  Leaf, Shirt, Apple, Palette, Gem, Smartphone, Sparkles, Construction,
+  ChevronRight, User
+} from 'lucide-react';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import ProductCard from './components/ProductCard';
@@ -148,11 +153,18 @@ export default function HomePage() {
                 <div className={styles.sidebarList}>
                   {categories.map(cat => (
                     <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.sidebarItem}>
-                      <span className={styles.sidebarIcon}>{cat.icon}</span>
+                      <span className={styles.sidebarIcon}>
+                        {cat.id === 'agricole' && <Leaf size={18} />}
+                        {cat.id === 'textile' && <Shirt size={18} />}
+                        {cat.id === 'alimentation' && <Apple size={18} />}
+                        {cat.id === 'artisanat' && <Palette size={18} />}
+                        {cat.id === 'bijoux' && <Gem size={18} />}
+                        {cat.id === 'electronique' && <Smartphone size={18} />}
+                        {cat.id === 'beaute' && <Sparkles size={18} />}
+                        {cat.id === 'batiment' && <Construction size={18} />}
+                      </span>
                       <span className={styles.sidebarName}>{cat.name}</span>
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                        <path d="M9 18l6-6-6-6"/>
-                      </svg>
+                      <ChevronRight size={14} className={styles.sidebarArrow} />
                     </Link>
                   ))}
                   <Link href="/categories" className={styles.sidebarMore}>Toutes les catégories</Link>
@@ -198,9 +210,7 @@ export default function HomePage() {
               <aside className={styles.heroRight}>
                 <div className={styles.accountCard}>
                   <div className={styles.accountAvatar}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-                    </svg>
+                    <User size={24} />
                   </div>
                   <p className={styles.accountWelcome}>Bienvenue sur Tiéba Market</p>
                   <div className={styles.accountBtns}>
@@ -233,12 +243,12 @@ export default function HomePage() {
           <div className="container">
             <div className={styles.promoBannerGrid}>
               {[
-                { emoji: '🛡️', title: 'Protection Tiéba', desc: 'Sécurité de la commande au paiement', color: '#16A34A', href: '/protection' },
-                { emoji: '🌍', title: 'Sourcing Direct', desc: 'Connectez-vous aux producteurs', color: '#0EA5E9', href: '/sourcing' },
-                { emoji: '✅', title: 'Vendeurs Vérifiés', desc: 'Contrôlés par nos équipes locales', color: '#F59E0B', href: '/fournisseurs' },
+                { icon: <ShieldCheck size={28} />, title: 'Protection Tiéba', desc: 'Sécurité de la commande au paiement', color: '#16A34A', href: '/protection' },
+                { icon: <Globe size={28} />, title: 'Sourcing Direct', desc: 'Connectez-vous aux producteurs', color: '#0EA5E9', href: '/sourcing' },
+                { icon: <BadgeCheck size={28} />, title: 'Vendeurs Vérifiés', desc: 'Contrôlés par nos équipes locales', color: '#F59E0B', href: '/fournisseurs' },
               ].map(b => (
                 <Link key={b.title} href={b.href} className={styles.promoBanner} style={{ '--accent': b.color }}>
-                  <span className={styles.promoBannerEmoji}>{b.emoji}</span>
+                  <span className={styles.promoBannerIcon} style={{ color: b.color }}>{b.icon}</span>
                   <div>
                     <div className={styles.promoBannerTitle}>{b.title}</div>
                     <div className={styles.promoBannerDesc}>{b.desc}</div>
@@ -265,17 +275,20 @@ export default function HomePage() {
 
             <div className={styles.categoriesGrid}>
               {categories.map((cat) => (
-                <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.categoryCard} id={`cat-${cat.id}`}>
-                  <div className={styles.categoryImageWrapper} style={{ borderColor: cat.color + '33' }}>
-                    <Image
-                      src={cat.image}
-                      alt={cat.name}
-                      fill
-                      sizes="(max-width: 768px) 50vw, 12vw"
-                      className={styles.categoryImage}
-                    />
-                    <div className={styles.categoryOverlay} style={{ background: cat.color + '22' }} />
-                    <span className={styles.categoryIcon}>{cat.icon}</span>
+                <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.categoryCard}>
+                  <div className={styles.categoryImageWrapper}>
+                    <Image src={cat.image} alt={cat.name} fill className={styles.categoryImage} />
+                    <div className={styles.categoryOverlay} />
+                    <div className={styles.categoryIcon}>
+                      {cat.id === 'agricole' && <Leaf size={32} />}
+                      {cat.id === 'textile' && <Shirt size={32} />}
+                      {cat.id === 'alimentation' && <Apple size={32} />}
+                      {cat.id === 'artisanat' && <Palette size={32} />}
+                      {cat.id === 'bijoux' && <Gem size={32} />}
+                      {cat.id === 'electronique' && <Smartphone size={32} />}
+                      {cat.id === 'beaute' && <Sparkles size={32} />}
+                      {cat.id === 'batiment' && <Construction size={32} />}
+                    </div>
                   </div>
                   <div className={styles.categoryInfo}>
                     <h3 className={styles.categoryName}>{cat.name}</h3>

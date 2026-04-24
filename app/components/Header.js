@@ -2,17 +2,21 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
+import { 
+  Search, User, Heart, ShoppingBag, Menu, ChevronDown, 
+  Leaf, Shirt, Apple, Palette, Gem, Smartphone, Sparkles, Construction 
+} from 'lucide-react';
 import styles from './Header.module.css';
 
 const categories = [
-  { name: 'Agricole', icon: '🌱', href: '/categories/agricole' },
-  { name: 'Textile & Pagnes', icon: '👘', href: '/categories/textile' },
-  { name: 'Alimentation', icon: '🍽️', href: '/categories/alimentation' },
-  { name: 'Artisanat', icon: '🎨', href: '/categories/artisanat' },
-  { name: 'Bijoux', icon: '💎', href: '/categories/bijoux' },
-  { name: 'Électronique', icon: '📱', href: '/categories/electronique' },
-  { name: 'Beauté & Santé', icon: '💄', href: '/categories/beaute' },
-  { name: 'Bâtiment', icon: '🏗️', href: '/categories/batiment' },
+  { name: 'Agricole', icon: <Leaf size={18} />, href: '/categories/agricole' },
+  { name: 'Textile & Pagnes', icon: <Shirt size={18} />, href: '/categories/textile' },
+  { name: 'Alimentation', icon: <Apple size={18} />, href: '/categories/alimentation' },
+  { name: 'Artisanat', icon: <Palette size={18} />, href: '/categories/artisanat' },
+  { name: 'Bijoux', icon: <Gem size={18} />, href: '/categories/bijoux' },
+  { name: 'Électronique', icon: <Smartphone size={18} />, href: '/categories/electronique' },
+  { name: 'Beauté & Santé', icon: <Sparkles size={18} />, href: '/categories/beaute' },
+  { name: 'Bâtiment', icon: <Construction size={18} />, href: '/categories/batiment' },
 ];
 
 export default function Header() {
@@ -91,10 +95,7 @@ export default function Header() {
                   className={styles.searchInput}
                 />
                 <button className={styles.searchBtn} aria-label="Rechercher">
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <circle cx="11" cy="11" r="8"/>
-                    <path d="M21 21l-4.35-4.35"/>
-                  </svg>
+                  <Search size={22} />
                   <span>Rechercher</span>
                 </button>
               </div>
@@ -104,10 +105,7 @@ export default function Header() {
             <div className={styles.actions}>
               <Link href="/compte" className={styles.actionBtn} id="account-link">
                 <div className={styles.actionIcon}>
-                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                    <circle cx="12" cy="7" r="4"/>
-                  </svg>
+                  <User size={22} />
                 </div>
                 <div className={styles.actionLabel}>
                   <span className={styles.actionSub}>
@@ -123,9 +121,7 @@ export default function Header() {
               <Link href="/favoris" className={styles.actionBtn} id="wishlist-link">
                 <div className={styles.actionIconWrapper}>
                   <div className={styles.actionIcon}>
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                    </svg>
+                    <Heart size={22} />
                   </div>
                   <span className={styles.badge}>{wishlistCount}</span>
                 </div>
@@ -137,11 +133,7 @@ export default function Header() {
 
               <Link href="/panier" className={styles.cartBtn} id="cart-link">
                 <div className={styles.cartIconWrapper}>
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
-                    <line x1="3" y1="6" x2="21" y2="6"/>
-                    <path d="M16 10a4 4 0 0 1-8 0"/>
-                  </svg>
+                  <ShoppingBag size={24} />
                   <span className={styles.cartBadge}>{cartCount}</span>
                 </div>
                 <div className={styles.actionLabel}>
@@ -171,15 +163,9 @@ export default function Header() {
             {/* All Categories */}
             <div className={styles.allCategoriesWrapper}>
               <button className={styles.allCategoriesBtn} id="all-categories-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="3" y1="12" x2="21" y2="12"/>
-                  <line x1="3" y1="6" x2="21" y2="6"/>
-                  <line x1="3" y1="18" x2="21" y2="18"/>
-                </svg>
+                <Menu size={18} />
                 Toutes les Catégories
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <polyline points="6 9 12 15 18 9"/>
-                </svg>
+                <ChevronDown size={14} />
               </button>
 
               {/* Mega Dropdown */}

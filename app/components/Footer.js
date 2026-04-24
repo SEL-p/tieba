@@ -1,4 +1,8 @@
 import Link from 'next/link';
+import { 
+  Truck, Lock, BadgeCheck, RotateCcw, Headset, 
+  Facebook, Instagram, MessageCircle, Twitter 
+} from 'lucide-react';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -9,11 +13,11 @@ export default function Footer() {
         <div className="container">
           <div className={styles.trustGrid}>
             {[
-              { icon: '🚚', title: 'Livraison Rapide', desc: 'Partout en Côte d\'Ivoire sous 48h' },
-              { icon: '🔒', title: 'Paiement Sécurisé', desc: 'Mobile Money, Carte, Virement' },
-              { icon: '✅', title: 'Vendeurs Vérifiés', desc: '100% fournisseurs certifiés' },
-              { icon: '↩️', title: 'Retour Facile', desc: '14 jours pour changer d\'avis' },
-              { icon: '🤝', title: 'Support 24/7', desc: 'Assistance en français et en dioula' },
+              { icon: <Truck size={32} />, title: 'Livraison Rapide', desc: 'Partout en Côte d\'Ivoire sous 48h' },
+              { icon: <Lock size={32} />, title: 'Paiement Sécurisé', desc: 'Mobile Money, Carte, Virement' },
+              { icon: <BadgeCheck size={32} />, title: 'Vendeurs Vérifiés', desc: '100% fournisseurs certifiés' },
+              { icon: <RotateCcw size={32} />, title: 'Retour Facile', desc: '14 jours pour changer d\'avis' },
+              { icon: <Headset size={32} />, title: 'Support 24/7', desc: 'Assistance en français et en dioula' },
             ].map(item => (
               <div key={item.title} className={styles.trustItem}>
                 <span className={styles.trustIcon}>{item.icon}</span>
@@ -45,10 +49,10 @@ export default function Footer() {
               </p>
               <div className={styles.socialLinks}>
                 {[
-                  { name: 'Facebook', icon: 'f', href: '#' },
-                  { name: 'Instagram', icon: '📸', href: '#' },
-                  { name: 'WhatsApp', icon: '💬', href: '#' },
-                  { name: 'Twitter', icon: 'X', href: '#' },
+                  { name: 'Facebook', icon: <Facebook size={20} />, href: '#' },
+                  { name: 'Instagram', icon: <Instagram size={20} />, href: '#' },
+                  { name: 'WhatsApp', icon: <MessageCircle size={20} />, href: '#' },
+                  { name: 'Twitter', icon: <Twitter size={20} />, href: '#' },
                 ].map(s => (
                   <a key={s.name} href={s.href} className={styles.socialLink} aria-label={s.name}>
                     {s.icon}

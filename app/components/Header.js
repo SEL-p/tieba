@@ -68,6 +68,14 @@ export default function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const getDashboardUrl = () => {
+    if (!session?.user) return '/connexion';
+    if (session.user.role === 'ADMIN') return '/admin/dashboard';
+    if (session.user.role === 'VENDEUR') return '/vendeur/dashboard';
+    if (session.user.role === 'LIVREUR') return '/livreur/dashboard';
+    return '/dashboard';
+  };
+
   return (
     <>
       {/* Top Banner */}
@@ -84,7 +92,7 @@ export default function Header() {
               <span className={styles.dot}>·</span>
               {session ? (
                 <>
-                  <Link href="/dashboard" className={styles.topLink}>Dashboard</Link>
+                  <Link href={getDashboardUrl()} className={styles.topLink}>Dashboard</Link>
                   <span className={styles.dot}>·</span>
                   <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>Se déconnecter</button>
                 </>
@@ -142,7 +150,7 @@ export default function Header() {
 
             {/* Right Actions */}
             <div className={styles.actions}>
-              <Link href="/dashboard" className={styles.actionBtn} id="account-link">
+              <Link href={getDashboardUrl()} className={styles.actionBtn} id="account-link">
                 <div className={styles.actionIcon}>
                   <User size={22} />
                 </div>

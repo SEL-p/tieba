@@ -214,8 +214,8 @@ export default function HomePage() {
                   </div>
                   <p className={styles.accountWelcome}>Bienvenue sur Tiéba Market</p>
                   <div className={styles.accountBtns}>
-                    <Link href="/compte" className={styles.btnJoin}>S'inscrire</Link>
-                    <Link href="/compte" className={styles.btnLogin}>Connexion</Link>
+                    <Link href="/inscription" className={styles.btnJoin}>S'inscrire</Link>
+                    <Link href="/connexion" className={styles.btnLogin}>Connexion</Link>
                   </div>
                 </div>
                 

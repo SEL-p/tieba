@@ -84,7 +84,7 @@ export default function Header() {
               <span className={styles.dot}>·</span>
               {session ? (
                 <>
-                  <Link href="/compte" className={styles.topLink}>Mon Compte</Link>
+                  <Link href="/dashboard" className={styles.topLink}>Dashboard</Link>
                   <span className={styles.dot}>·</span>
                   <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>Se déconnecter</button>
                 </>
@@ -142,7 +142,7 @@ export default function Header() {
 
             {/* Right Actions */}
             <div className={styles.actions}>
-              <Link href="/compte" className={styles.actionBtn} id="account-link">
+              <Link href="/dashboard" className={styles.actionBtn} id="account-link">
                 <div className={styles.actionIcon}>
                   <User size={22} />
                 </div>
@@ -153,7 +153,7 @@ export default function Header() {
                    <span className={styles.actionMain}>
                     {session ? (
                       session.user.role === 'VENDEUR' ? 'Dashboard' : 
-                      session.user.role === 'LIVREUR' ? 'Missions' : 'Mon Compte'
+                      session.user.role === 'LIVREUR' ? 'Missions' : 'Dashboard'
                     ) : 'Se connecter'}
                   </span>
                 </div>

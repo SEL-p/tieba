@@ -37,7 +37,7 @@ export default function ConnexionPage() {
         if (role === 'ADMIN') router.push('/admin/dashboard');
         else if (role === 'VENDEUR') router.push('/vendeur/dashboard');
         else if (role === 'LIVREUR') router.push('/livreur/dashboard');
-        else router.push('/');
+        else router.push('/dashboard');
         
         router.refresh();
       }

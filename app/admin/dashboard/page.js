@@ -50,7 +50,7 @@ export default function AdminDashboard() {
         try {
           const res = await fetch('/api/admin/vendors');
           const data = await res.json();
-          setAllVendors(data);
+          if (Array.isArray(data)) setAllVendors(data);
         } catch (error) {
           console.error('Error fetching vendors:', error);
         }
@@ -66,7 +66,7 @@ export default function AdminDashboard() {
         try {
           const res = await fetch('/api/admin/users');
           const data = await res.json();
-          setAllUsers(data);
+          if (Array.isArray(data)) setAllUsers(data);
         } catch (error) {
           console.error('Error fetching users:', error);
         }
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
         try {
           const res = await fetch('/api/categories');
           const data = await res.json();
-          setCategories(data);
+          if (Array.isArray(data)) setCategories(data);
         } catch (error) {
           console.error('Error fetching categories:', error);
         }

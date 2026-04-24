@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../auth/[...nextauth]/route';
 import { prisma } from '@/lib/prisma';
 
 export async function GET() {
@@ -20,7 +21,7 @@ export async function GET() {
 
 export async function POST(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
@@ -48,7 +49,7 @@ export async function POST(request) {
 
 export async function DELETE(request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'ADMIN') {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }

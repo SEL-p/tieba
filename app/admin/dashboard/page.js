@@ -120,20 +120,6 @@ export default function AdminDashboard() {
     }
   };
 
-  const updateUserStatus = async (userId, isActive) => {
-    try {
-      const res = await fetch('/api/admin/users', {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId, isActive })
-      });
-      if (res.ok) {
-        setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive } : u));
-      }
-    } catch (error) {
-      console.error('Error updating user:', error);
-    }
-  };
 
   const handleAddCategory = async (e) => {
     e.preventDefault();

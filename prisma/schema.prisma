@@ -156,3 +156,24 @@ model Favorite {
   @@unique([userId, productId])
 }
 
+model PlatformConfig {
+  id               String   @id @default("default")
+  deliveryFeeBase  Float    @default(1500)
+  deliveryFeeKm    Float    @default(100)
+  livreurShare     Float    @default(0.80)
+  contactEmail     String   @default("contact@tiebamarket.ci")
+  contactPhone     String   @default("+225 07 00 00 00")
+  facebookUrl      String?
+  instagramUrl     String?
+  seoTitle         String   @default("Tiéba Market")
+  seoDescription   String   @default("Le meilleur marché en ligne")
+  updatedAt        DateTime @updatedAt
+}
+
+model Banner {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  linkUrl   String?
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

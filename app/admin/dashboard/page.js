@@ -21,6 +21,10 @@ export default function AdminDashboard() {
   const [newCatIcon, setNewCatIcon] = useState('Box');
   const [newCatColor, setNewCatColor] = useState('#f97316');
   const [settingsTab, setSettingsTab] = useState('categories');
+  const [config, setConfig] = useState(null);
+  const [banners, setBanners] = useState([]);
+  const [newBannerImage, setNewBannerImage] = useState('');
+  const [newBannerLink, setNewBannerLink] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Stats (Overview)
@@ -75,19 +79,29 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
-  // Fetch Categories for Settings
+  // Fetch Categories, Config, and Banners for Settings
   useEffect(() => {
     if (activeTab === 'settings') {
-      const fetchCategories = async () => {
+      const fetchSettingsData = async () => {
         try {
-          const res = await fetch('/api/categories');
-          const data = await res.json();
-          if (Array.isArray(data)) setCategories(data);
+          const [catRes, confRes, banRes] = await Promise.all([
+            fetch('/api/categories'),
+            fetch('/api/admin/config'),
+            fetch('/api/admin/banners')
+          ]);
+          
+          const catData = await catRes.json();
+          const confData = await confRes.json();
+          const banData = await banRes.json();
+
+          if (Array.isArray(catData)) setCategories(catData);
+          if (confData && !confData.error) setConfig(confData);
+          if (Array.isArray(banData)) setBanners(banData);
         } catch (error) {
-          console.error('Error fetching categories:', error);
+          console.error('Error fetching settings data:', error);
         }
       };
-      fetchCategories();
+      fetchSettingsData();
     }
   }, [activeTab]);
 
@@ -153,6 +167,54 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error deleting category:', error);
+    }
+  };
+
+  const handleUpdateConfig = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/admin/config', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(config)
+      });
+      if (res.ok) {
+        alert('Configuration mise à jour avec succès !');
+      }
+    } catch (error) {
+      console.error('Error updating config:', error);
+    }
+  };
+
+  const handleAddBanner = async (e) => {
+    e.preventDefault();
+    if (!newBannerImage) return;
+    try {
+      const res = await fetch('/api/admin/banners', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl: newBannerImage, linkUrl: newBannerLink })
+      });
+      if (res.ok) {
+        const added = await res.json();
+        setBanners([added, ...banners]);
+        setNewBannerImage('');
+        setNewBannerLink('');
+      }
+    } catch (error) {
+      console.error('Error adding banner:', error);
+    }
+  };
+
+  const handleDeleteBanner = async (id) => {
+    if (!confirm('Voulez-vous vraiment supprimer cette bannière ?')) return;
+    try {
+      const res = await fetch(`/api/admin/banners?id=${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        setBanners(banners.filter(b => b.id !== id));
+      }
+    } catch (error) {
+      console.error('Error deleting banner:', error);
     }
   };
 
@@ -510,29 +572,174 @@ export default function AdminDashboard() {
       )}
 
       {/* Sub-tab: Delivery */}
-      {settingsTab === 'delivery' && (
+      {settingsTab === 'delivery' && config && (
         <section className={styles.section}>
           <h3>Configuration des Frais de Livraison</h3>
           <p style={{ color: '#64748b', marginBottom: '16px' }}>Définissez les frais de base et le pourcentage alloué au livreur.</p>
-          <div className={styles.loading}>Module en cours de construction...</div>
+          <form onSubmit={handleUpdateConfig} style={{ display: 'flex', flexDirection: 'column', gap: '16px', maxWidth: '500px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Frais de base (CFA)</label>
+              <input 
+                type="number" 
+                value={config.deliveryFeeBase} 
+                onChange={e => setConfig({ ...config, deliveryFeeBase: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Frais par Km (CFA)</label>
+              <input 
+                type="number" 
+                value={config.deliveryFeeKm} 
+                onChange={e => setConfig({ ...config, deliveryFeeKm: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Part du Livreur (ex: 0.8 pour 80%)</label>
+              <input 
+                type="number" 
+                step="0.01"
+                value={config.livreurShare} 
+                onChange={e => setConfig({ ...config, livreurShare: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <button type="submit" className={styles.btnApprove} style={{ padding: '12px', marginTop: '8px' }}>
+              Sauvegarder les frais
+            </button>
+          </form>
         </section>
       )}
 
       {/* Sub-tab: Banners */}
       {settingsTab === 'banners' && (
-        <section className={styles.section}>
-          <h3>Gestion des Bannières</h3>
-          <p style={{ color: '#64748b', marginBottom: '16px' }}>Ajoutez ou supprimez des bannières pour la page d'accueil (Carousel).</p>
-          <div className={styles.loading}>Module en cours de construction...</div>
-        </section>
+        <>
+          <section className={styles.section} style={{ marginBottom: '32px' }}>
+            <div className={styles.sectionHeader}>
+              <h3>Ajouter une Bannière</h3>
+            </div>
+            <form onSubmit={handleAddBanner} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '300px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>URL de l'image</label>
+                <input 
+                  type="url" 
+                  value={newBannerImage} 
+                  onChange={e => setNewBannerImage(e.target.value)} 
+                  placeholder="https://..." 
+                  required
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <div style={{ flex: 1, minWidth: '300px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Lien de redirection (Optionnel)</label>
+                <input 
+                  type="text" 
+                  value={newBannerLink} 
+                  onChange={e => setNewBannerLink(e.target.value)} 
+                  placeholder="/categories/mode" 
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <button type="submit" className={styles.btnApprove} style={{ padding: '12px 24px', fontSize: '14px' }}>
+                Ajouter
+              </button>
+            </form>
+          </section>
+
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h3>Bannières Existantes</h3>
+            </div>
+            <div className={styles.list}>
+              {banners.map(b => (
+                <div key={b.id} className={styles.item}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <img src={b.imageUrl} alt="Banner" style={{ width: '120px', height: '60px', objectFit: 'cover', borderRadius: '8px' }} />
+                    <div>
+                      <h3 style={{ margin: 0 }}>Lien: {b.linkUrl || 'Aucun'}</h3>
+                      <small style={{ color: '#64748b' }}>Créé le: {new Date(b.createdAt).toLocaleDateString()}</small>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleDeleteBanner(b.id)} 
+                    className={styles.btnReject}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ))}
+              {banners.length === 0 && <p className={styles.loading}>Aucune bannière.</p>}
+            </div>
+          </section>
+        </>
       )}
 
       {/* Sub-tab: General */}
-      {settingsTab === 'general' && (
+      {settingsTab === 'general' && config && (
         <section className={styles.section}>
           <h3>Paramètres Généraux</h3>
           <p style={{ color: '#64748b', marginBottom: '16px' }}>Informations de contact, Liens réseaux sociaux et SEO.</p>
-          <div className={styles.loading}>Module en cours de construction...</div>
+          <form onSubmit={handleUpdateConfig} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Email de Contact</label>
+              <input 
+                type="email" 
+                value={config.contactEmail} 
+                onChange={e => setConfig({ ...config, contactEmail: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Téléphone de Contact</label>
+              <input 
+                type="text" 
+                value={config.contactPhone} 
+                onChange={e => setConfig({ ...config, contactPhone: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Lien Facebook</label>
+              <input 
+                type="text" 
+                value={config.facebookUrl || ''} 
+                onChange={e => setConfig({ ...config, facebookUrl: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Lien Instagram</label>
+              <input 
+                type="text" 
+                value={config.instagramUrl || ''} 
+                onChange={e => setConfig({ ...config, instagramUrl: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Titre SEO (Site Web)</label>
+              <input 
+                type="text" 
+                value={config.seoTitle} 
+                onChange={e => setConfig({ ...config, seoTitle: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold' }}>Description SEO</label>
+              <textarea 
+                value={config.seoDescription} 
+                onChange={e => setConfig({ ...config, seoDescription: e.target.value })}
+                style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1', minHeight: '80px' }}
+              />
+            </div>
+            <div style={{ gridColumn: '1 / -1' }}>
+              <button type="submit" className={styles.btnApprove} style={{ padding: '12px 24px', fontSize: '16px' }}>
+                Sauvegarder les modifications
+              </button>
+            </div>
+          </form>
         </section>
       )}
     </div>

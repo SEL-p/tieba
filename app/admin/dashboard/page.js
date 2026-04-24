@@ -20,6 +20,7 @@ export default function AdminDashboard() {
   const [newCatName, setNewCatName] = useState('');
   const [newCatIcon, setNewCatIcon] = useState('Box');
   const [newCatColor, setNewCatColor] = useState('#f97316');
+  const [settingsTab, setSettingsTab] = useState('categories');
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Stats (Overview)
@@ -406,74 +407,134 @@ export default function AdminDashboard() {
   {activeTab === 'settings' && (
     <div>
       <h2>Paramètres & Configuration</h2>
-      <p style={{ marginBottom: '24px', color: '#64748b' }}>Gérez les catégories de produits, les bannières et les frais globaux.</p>
+      <p style={{ marginBottom: '24px', color: '#64748b' }}>Gérez les différents aspects techniques et commerciaux de la plateforme.</p>
       
-      <section className={styles.section} style={{ marginBottom: '32px' }}>
-        <div className={styles.sectionHeader}>
-          <h3>🏷️ Ajouter une Catégorie</h3>
-        </div>
-        <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-          <div style={{ flex: 1, minWidth: '200px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Nom de la catégorie</label>
-            <input 
-              type="text" 
-              value={newCatName} 
-              onChange={e => setNewCatName(e.target.value)} 
-              placeholder="Ex: Électronique" 
-              required
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-            />
-          </div>
-          <div style={{ width: '150px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Icône (Lucide)</label>
-            <input 
-              type="text" 
-              value={newCatIcon} 
-              onChange={e => setNewCatIcon(e.target.value)} 
-              placeholder="Ex: Smartphone" 
-              style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
-            />
-          </div>
-          <div style={{ width: '100px' }}>
-            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Couleur</label>
-            <input 
-              type="color" 
-              value={newCatColor} 
-              onChange={e => setNewCatColor(e.target.value)} 
-              style={{ width: '100%', height: '42px', padding: '0', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
-            />
-          </div>
-          <button type="submit" className={styles.btnApprove} style={{ padding: '12px 24px', fontSize: '14px' }}>
-            Ajouter
-          </button>
-        </form>
-      </section>
+      {/* Sub-navigation for Settings */}
+      <div style={{ display: 'flex', gap: '16px', marginBottom: '32px', borderBottom: '1px solid #e2e8f0', paddingBottom: '16px' }}>
+        <button 
+          onClick={() => setSettingsTab('categories')}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: settingsTab === 'categories' ? '#fff7ed' : 'transparent', color: settingsTab === 'categories' ? '#ea580c' : '#64748b', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          🏷️ Catégories
+        </button>
+        <button 
+          onClick={() => setSettingsTab('delivery')}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: settingsTab === 'delivery' ? '#fff7ed' : 'transparent', color: settingsTab === 'delivery' ? '#ea580c' : '#64748b', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          🚚 Frais de Livraison
+        </button>
+        <button 
+          onClick={() => setSettingsTab('banners')}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: settingsTab === 'banners' ? '#fff7ed' : 'transparent', color: settingsTab === 'banners' ? '#ea580c' : '#64748b', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          🖼️ Bannières
+        </button>
+        <button 
+          onClick={() => setSettingsTab('general')}
+          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: settingsTab === 'general' ? '#fff7ed' : 'transparent', color: settingsTab === 'general' ? '#ea580c' : '#64748b', fontWeight: 'bold', cursor: 'pointer' }}
+        >
+          ⚙️ Général
+        </button>
+      </div>
 
-      <section className={styles.section}>
-        <div className={styles.sectionHeader}>
-          <h3>📋 Catégories Existantes</h3>
-        </div>
-        <div className={styles.list}>
-          {categories.map(c => (
-            <div key={c.id} className={styles.item}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: c.color || '#f1f5f9', opacity: 0.8 }} />
-                <div>
-                  <h3 style={{ margin: 0 }}>{c.name}</h3>
-                  <small style={{ color: '#64748b' }}>Icône: {c.icon || 'Aucune'} | Produits liés: {c._count?.products || 0}</small>
-                </div>
-              </div>
-              <button 
-                onClick={() => handleDeleteCategory(c.id)} 
-                className={styles.btnReject}
-              >
-                Supprimer
-              </button>
+      {/* Sub-tab: Categories */}
+      {settingsTab === 'categories' && (
+        <>
+          <section className={styles.section} style={{ marginBottom: '32px' }}>
+            <div className={styles.sectionHeader}>
+              <h3>Ajouter une Catégorie</h3>
             </div>
-          ))}
-          {categories.length === 0 && <p className={styles.loading}>Aucune catégorie.</p>}
-        </div>
-      </section>
+            <form onSubmit={handleAddCategory} style={{ display: 'flex', gap: '16px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Nom de la catégorie</label>
+                <input 
+                  type="text" 
+                  value={newCatName} 
+                  onChange={e => setNewCatName(e.target.value)} 
+                  placeholder="Ex: Électronique" 
+                  required
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <div style={{ width: '150px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Icône (Lucide)</label>
+                <input 
+                  type="text" 
+                  value={newCatIcon} 
+                  onChange={e => setNewCatIcon(e.target.value)} 
+                  placeholder="Ex: Smartphone" 
+                  style={{ width: '100%', padding: '12px', borderRadius: '8px', border: '1px solid #cbd5e1' }}
+                />
+              </div>
+              <div style={{ width: '100px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 'bold' }}>Couleur</label>
+                <input 
+                  type="color" 
+                  value={newCatColor} 
+                  onChange={e => setNewCatColor(e.target.value)} 
+                  style={{ width: '100%', height: '42px', padding: '0', border: 'none', borderRadius: '8px', cursor: 'pointer' }}
+                />
+              </div>
+              <button type="submit" className={styles.btnApprove} style={{ padding: '12px 24px', fontSize: '14px' }}>
+                Ajouter
+              </button>
+            </form>
+          </section>
+
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h3>Catégories Existantes</h3>
+            </div>
+            <div className={styles.list}>
+              {categories.map(c => (
+                <div key={c.id} className={styles.item}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                    <div style={{ width: '40px', height: '40px', borderRadius: '8px', background: c.color || '#f1f5f9', opacity: 0.8 }} />
+                    <div>
+                      <h3 style={{ margin: 0 }}>{c.name}</h3>
+                      <small style={{ color: '#64748b' }}>Icône: {c.icon || 'Aucune'} | Produits liés: {c._count?.products || 0}</small>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => handleDeleteCategory(c.id)} 
+                    className={styles.btnReject}
+                  >
+                    Supprimer
+                  </button>
+                </div>
+              ))}
+              {categories.length === 0 && <p className={styles.loading}>Aucune catégorie.</p>}
+            </div>
+          </section>
+        </>
+      )}
+
+      {/* Sub-tab: Delivery */}
+      {settingsTab === 'delivery' && (
+        <section className={styles.section}>
+          <h3>Configuration des Frais de Livraison</h3>
+          <p style={{ color: '#64748b', marginBottom: '16px' }}>Définissez les frais de base et le pourcentage alloué au livreur.</p>
+          <div className={styles.loading}>Module en cours de construction...</div>
+        </section>
+      )}
+
+      {/* Sub-tab: Banners */}
+      {settingsTab === 'banners' && (
+        <section className={styles.section}>
+          <h3>Gestion des Bannières</h3>
+          <p style={{ color: '#64748b', marginBottom: '16px' }}>Ajoutez ou supprimez des bannières pour la page d'accueil (Carousel).</p>
+          <div className={styles.loading}>Module en cours de construction...</div>
+        </section>
+      )}
+
+      {/* Sub-tab: General */}
+      {settingsTab === 'general' && (
+        <section className={styles.section}>
+          <h3>Paramètres Généraux</h3>
+          <p style={{ color: '#64748b', marginBottom: '16px' }}>Informations de contact, Liens réseaux sociaux et SEO.</p>
+          <div className={styles.loading}>Module en cours de construction...</div>
+        </section>
+      )}
     </div>
   )}
 

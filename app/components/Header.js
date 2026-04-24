@@ -63,7 +63,7 @@ export default function Header() {
                   <button onClick={() => signOut({ callbackUrl: '/' })} className={styles.logoutBtn}>Se déconnecter</button>
                 </>
               ) : (
-                <Link href="/connexion" className={styles.topLink}>Connexion / Inscription</Link>
+                <Link href="/connexion" className={styles.topLink}>Se connecter</Link>
               )}
             </div>
           </div>
@@ -124,9 +124,11 @@ export default function Header() {
                   <span className={styles.actionSub}>
                     {session ? `Bonjour, ${session.user.name.split(' ')[0]} 👋` : 'Bonjour 👋'}
                   </span>
-                  <span className={styles.actionMain}>
-                    {session?.user?.role === 'VENDEUR' ? 'Dashboard' : 
-                     session?.user?.role === 'LIVREUR' ? 'Missions' : 'Mon Compte'}
+                   <span className={styles.actionMain}>
+                    {session ? (
+                      session.user.role === 'VENDEUR' ? 'Dashboard' : 
+                      session.user.role === 'LIVREUR' ? 'Missions' : 'Mon Compte'
+                    ) : 'Se connecter'}
                   </span>
                 </div>
               </Link>

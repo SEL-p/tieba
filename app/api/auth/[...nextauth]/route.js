@@ -24,6 +24,10 @@ export const authOptions = {
           throw new Error("Aucun utilisateur trouvé avec cet email");
         }
 
+        if (!user.isActive) {
+          throw new Error("Ce compte a été suspendu par l'administration.");
+        }
+
         const isPasswordCorrect = await bcrypt.compare(
           credentials.password,
           user.password

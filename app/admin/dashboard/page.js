@@ -15,6 +15,7 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [pendingVendors, setPendingVendors] = useState([]);
   const [allVendors, setAllVendors] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch Stats (Overview)
@@ -53,6 +54,22 @@ export default function AdminDashboard() {
     }
   }, [activeTab]);
 
+  // Fetch All Users
+  useEffect(() => {
+    if (activeTab === 'users') {
+      const fetchUsers = async () => {
+        try {
+          const res = await fetch('/api/admin/users');
+          const data = await res.json();
+          setAllUsers(data);
+        } catch (error) {
+          console.error('Error fetching users:', error);
+        }
+      };
+      fetchUsers();
+    }
+  }, [activeTab]);
+
   const updateVendorStatus = async (sellerId, verified) => {
     try {
       const res = await fetch('/api/admin/vendors', {
@@ -65,6 +82,21 @@ export default function AdminDashboard() {
       }
     } catch (error) {
       console.error('Error updating vendor:', error);
+    }
+  };
+
+  const updateUserStatus = async (userId, isActive) => {
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId, isActive })
+      });
+      if (res.ok) {
+        setAllUsers(prev => prev.map(u => u.id === userId ? { ...u, isActive } : u));
+      }
+    } catch (error) {
+      console.error('Error updating user:', error);
     }
   };
 
@@ -216,9 +248,47 @@ export default function AdminDashboard() {
   {activeTab === 'users' && (
     <div>
       <h2>Gestion des Utilisateurs</h2>
-      <p>Liste et gestion de tous les acheteurs et livreurs inscrits sur la plateforme.</p>
-      {/* Here you could map through actual users fetched from another API route */}
-      <div className={styles.loading}>Module en cours de construction...</div>
+      <p style={{ marginBottom: '24px', color: '#64748b' }}>Liste et gestion de tous les acheteurs et livreurs inscrits sur la plateforme.</p>
+      
+      <div className={styles.list}>
+        {allUsers.map(u => (
+          <div key={u.id} className={styles.item}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: u.role === 'LIVREUR' ? '#dbeafe' : '#f1f5f9', color: u.role === 'LIVREUR' ? '#1e3a8a' : '#475569', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '16px', fontWeight: 'bold' }}>
+                {u.name ? u.name.charAt(0).toUpperCase() : 'U'}
+              </div>
+              <div>
+                <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  {u.name || 'Utilisateur Anonyme'} 
+                  <span style={{ fontSize: '11px', padding: '2px 6px', background: u.role === 'LIVREUR' ? '#bfdbfe' : '#e2e8f0', borderRadius: '4px' }}>{u.role}</span>
+                </h3>
+                <p>Email: {u.email} {u.phone && `| Tél: ${u.phone}`}</p>
+                <p>Inscrit le: {new Date(u.createdAt).toLocaleDateString()}</p>
+              </div>
+            </div>
+            <div className={styles.itemActions}>
+              {!u.isActive ? (
+                <button 
+                  className={styles.btnApprove}
+                  onClick={() => updateUserStatus(u.id, true)}
+                >
+                  Débloquer
+                </button>
+              ) : (
+                <button 
+                  className={styles.btnReject}
+                  onClick={() => updateUserStatus(u.id, false)}
+                >
+                  Bloquer
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+        {allUsers.length === 0 && (
+          <div className={styles.loading}>Aucun utilisateur trouvé.</div>
+        )}
+      </div>
     </div>
   )}
 

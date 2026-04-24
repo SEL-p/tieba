@@ -2,13 +2,16 @@
 import { useState, useEffect } from 'react';
 import { 
   Users, ShoppingBag, DollarSign, AlertCircle, 
-  CheckCircle, XCircle, FileText, Activity 
+  CheckCircle, XCircle, FileText, Activity, LogOut, Settings
 } from 'lucide-react';
+import { useSession, signOut } from 'next-auth/react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import styles from './admin.module.css';
 
 export default function AdminDashboard() {
+  const { data: session } = useSession();
+  const [activeTab, setActiveTab] = useState('overview');
   const [stats, setStats] = useState(null);
   const [pendingVendors, setPendingVendors] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -36,8 +39,67 @@ export default function AdminDashboard() {
     <>
       <Header />
       <div className={styles.adminContainer}>
-        <div className="container">
-          <header className={styles.header}>
+        <div className={styles.dashboardLayout}>
+          
+          {/* Admin Sidebar */}
+          <aside className={styles.sidebar}>
+            <div className={styles.sidebarProfile}>
+              <div className={styles.avatar}>
+                {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'A'}
+              </div>
+              <div>
+                <h3>{session?.user?.name || 'Administrateur'}</h3>
+                <span className={styles.adminBadge}>SUPER ADMIN</span>
+              </div>
+            </div>
+            
+            <nav className={styles.nav}>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'overview' ? styles.active : ''}`}
+                onClick={() => setActiveTab('overview')}
+              >
+                <Activity size={18} /> Vue d'ensemble
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'users' ? styles.active : ''}`}
+                onClick={() => setActiveTab('users')}
+              >
+                <Users size={18} /> Utilisateurs
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'vendors' ? styles.active : ''}`}
+                onClick={() => setActiveTab('vendors')}
+              >
+                <ShoppingBag size={18} /> Vendeurs
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'finances' ? styles.active : ''}`}
+                onClick={() => setActiveTab('finances')}
+              >
+                <DollarSign size={18} /> Finances
+              </button>
+              <button 
+                className={`${styles.navItem} ${activeTab === 'settings' ? styles.active : ''}`}
+                onClick={() => setActiveTab('settings')}
+              >
+                <Settings size={18} /> Paramètres
+              </button>
+              
+              <button 
+                className={styles.navItem}
+                onClick={() => signOut({ callbackUrl: '/' })}
+                style={{ marginTop: 'auto', color: '#ef4444' }}
+              >
+                <LogOut size={18} /> Se déconnecter
+              </button>
+            </nav>
+          </aside>
+
+          {/* Main Content Area */}
+          <main className={styles.mainContent}>
+            {activeTab === 'overview' && (
+              <>
+                <header className={styles.header}>
             <h1>👑 Administration Tiéba</h1>
             <div className={styles.systemStatus}>
               <span className={styles.pulse}></span> Système Opérationnel
@@ -113,9 +175,46 @@ export default function AdminDashboard() {
               </div>
             </section>
           </div>
-        </div>
-      </div>
-      <Footer />
-    </>
-  );
+        </>
+      )}
+
+  {activeTab === 'users' && (
+    <div>
+      <h2>Gestion des Utilisateurs</h2>
+      <p>Liste et gestion de tous les acheteurs et livreurs inscrits sur la plateforme.</p>
+      {/* Here you could map through actual users fetched from another API route */}
+      <div className={styles.loading}>Module en cours de construction...</div>
+    </div>
+  )}
+
+  {activeTab === 'vendors' && (
+    <div>
+      <h2>Gestion des Vendeurs</h2>
+      <p>Validation des RCCM, suspension de comptes et gestion des litiges vendeurs.</p>
+      <div className={styles.loading}>Module en cours de construction...</div>
+    </div>
+  )}
+
+  {activeTab === 'finances' && (
+    <div>
+      <h2>Finances & Rapports</h2>
+      <p>Historique complet des transactions, paiements et calcul des revenus nets.</p>
+      <div className={styles.loading}>Module en cours de construction...</div>
+    </div>
+  )}
+
+  {activeTab === 'settings' && (
+    <div>
+      <h2>Paramètres de la Plateforme</h2>
+      <p>Configuration des frais de livraison globaux, bannières d'accueil et SEO.</p>
+      <div className={styles.loading}>Module en cours de construction...</div>
+    </div>
+  )}
+
+  </main>
+</div>
+</div>
+<Footer />
+</>
+);
 }

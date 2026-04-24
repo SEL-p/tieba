@@ -33,8 +33,34 @@ export default function Header() {
       router.push(`/recherche?q=${encodeURIComponent(searchQuery)}`);
     }
   };
-  const [cartCount] = useState(3);
-  const [wishlistCount] = useState(7);
+  const [cartCount, setCartCount] = useState(0);
+  const [cartTotal, setCartTotal] = useState(0);
+  const [wishlistCount, setWishlistCount] = useState(0);
+
+  useEffect(() => {
+    if (session) {
+      // Fetch Cart
+      fetch('/api/cart')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setCartCount(data.reduce((acc, item) => acc + item.quantity, 0));
+            setCartTotal(data.reduce((acc, item) => acc + (item.product.price * item.quantity), 0));
+          }
+        })
+        .catch(err => console.error(err));
+
+      // Fetch Favorites
+      fetch('/api/favorites')
+        .then(res => res.json())
+        .then(data => {
+          if (Array.isArray(data)) {
+            setWishlistCount(data.length);
+          }
+        })
+        .catch(err => console.error(err));
+    }
+  }, [session]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -138,7 +164,7 @@ export default function Header() {
                   <div className={styles.actionIcon}>
                     <Heart size={22} />
                   </div>
-                  <span className={styles.badge}>{wishlistCount}</span>
+                  {wishlistCount > 0 && <span className={styles.badge}>{wishlistCount}</span>}
                 </div>
                 <div className={styles.actionLabel}>
                   <span className={styles.actionSub}>Sauvegardés</span>
@@ -149,11 +175,13 @@ export default function Header() {
               <Link href="/panier" className={styles.cartBtn} id="cart-link">
                 <div className={styles.cartIconWrapper}>
                   <ShoppingBag size={24} />
-                  <span className={styles.cartBadge}>{cartCount}</span>
+                  {cartCount > 0 && <span className={styles.cartBadge}>{cartCount}</span>}
                 </div>
                 <div className={styles.actionLabel}>
                   <span className={styles.actionSub}>Votre panier</span>
-                  <span className={styles.actionMain}>CFA 45,000</span>
+                  <span className={styles.actionMain}>
+                    {cartTotal > 0 ? `${cartTotal.toLocaleString()} CFA` : '0 CFA'}
+                  </span>
                 </div>
               </Link>
             </div>

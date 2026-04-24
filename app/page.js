@@ -135,122 +135,107 @@ export default function HomePage() {
       <Header />
       <main className={styles.main}>
 
-        {/* ===== HERO SECTION ===== */}
-        <section className={styles.hero} aria-label="Bannière principale">
-          <div className={styles.heroSlider}>
-            {heroSlides.map((s, i) => (
-              <div
-                key={s.id}
-                className={`${styles.heroSlide} ${i === currentSlide ? styles.active : ''}`}
-              >
-                <Image
-                  src={s.image}
-                  alt={s.title.replace('\n', ' ')}
-                  fill
-                  priority={i === 0}
-                  sizes="100vw"
-                  className={styles.heroImage}
-                />
-                <div className={styles.heroOverlay} />
-              </div>
-            ))}
+        {/* ===== HERO SECTION (Alibaba Style) ===== */}
+        <section className={styles.heroSection}>
+          <div className="container">
+            <div className={styles.heroGrid}>
+              
+              {/* 1. Left Sidebar: Categories */}
+              <aside className={styles.heroSidebar}>
+                <div className={styles.sidebarHeader}>
+                  <h3>Catégories pour vous</h3>
+                </div>
+                <div className={styles.sidebarList}>
+                  {categories.map(cat => (
+                    <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.sidebarItem}>
+                      <span className={styles.sidebarIcon}>{cat.icon}</span>
+                      <span className={styles.sidebarName}>{cat.name}</span>
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <path d="M9 18l6-6-6-6"/>
+                      </svg>
+                    </Link>
+                  ))}
+                  <Link href="/categories" className={styles.sidebarMore}>Toutes les catégories</Link>
+                </div>
+              </aside>
 
-            {/* Hero Content */}
-            <div className={styles.heroContent}>
-              <div className="container">
-                <div className={styles.heroInner}>
-                  <div className={styles.heroText} key={currentSlide}>
-                    <span className={styles.heroBadge}>{slide.badge}</span>
-                    <h1 className={styles.heroTitle}>
-                      {slide.title.split('\n').map((line, i) => (
-                        <span key={i}>{line}{i === 0 && <br />}</span>
-                      ))}
-                    </h1>
-                    <p className={styles.heroSubtitle}>{slide.subtitle}</p>
-                    <div className={styles.heroCtas}>
-                      <Link href="/categories" className={`btn btn-primary btn-lg ${styles.heroCta}`}>
-                        {slide.cta}
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M5 12h14M12 5l7 7-7 7"/>
-                        </svg>
-                      </Link>
-                      <Link href="/vendeur" className={`btn btn-ghost btn-lg ${styles.heroCtaSecondary}`}>
-                        {slide.ctaSecondary}
-                      </Link>
-                    </div>
-                    {/* Stats */}
-                    <div className={styles.heroStats}>
-                      {[
-                        { value: '50,000+', label: 'Produits' },
-                        { value: '3,200+', label: 'Vendeurs' },
-                        { value: '120,000+', label: 'Clients' },
-                        { value: '4.8/5', label: 'Satisfaction' },
-                      ].map(stat => (
-                        <div key={stat.label} className={styles.heroStat}>
-                          <span className={styles.heroStatValue}>{stat.value}</span>
-                          <span className={styles.heroStatLabel}>{stat.label}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Search floating card */}
-                  <div className={styles.heroCard}>
-                    <h3 className={styles.heroCardTitle}>Recherche Rapide</h3>
-                    <div className={styles.heroCardSearch}>
-                      <input
-                        type="text"
-                        placeholder="Ex: Cacao, Pagne, Cajou..."
-                        className="input"
-                        id="hero-search-input"
+              {/* 2. Middle: Carousel */}
+              <div className={styles.heroMain}>
+                <div className={styles.heroSlider}>
+                  {heroSlides.map((s, i) => (
+                    <div
+                      key={s.id}
+                      className={`${styles.heroSlide} ${i === currentSlide ? styles.active : ''}`}
+                    >
+                      <Image
+                        src={s.image}
+                        alt={s.title.replace('\n', ' ')}
+                        fill
+                        priority={i === 0}
+                        sizes="(max-width: 1024px) 100vw, 60vw"
+                        className={styles.heroImage}
                       />
-                      <button className="btn btn-primary" style={{ marginTop: '8px', width: '100%' }}>
-                        🔍 Rechercher
-                      </button>
-                    </div>
-                    <div className={styles.heroCardCategories}>
-                      <p className={styles.heroCardLabel}>Catégories populaires:</p>
-                      <div className={styles.heroCardTags}>
-                        {['🌱 Cacao', '👘 Pagne', '🥜 Cajou', '🍽️ Attiéké', '💄 Karité'].map(tag => (
-                          <button key={tag} className={styles.heroCardTag}>{tag}</button>
-                        ))}
+                      <div className={styles.heroSlideContent}>
+                        <span className={styles.slideBadge}>{s.badge}</span>
+                        <h2 className={styles.slideTitle}>{s.title}</h2>
+                        <Link href="/categories" className="btn btn-primary">Découvrir</Link>
                       </div>
                     </div>
-                    <div className={styles.heroCardTrust}>
-                      <span>✅ Vendeurs vérifiés</span>
-                      <span>🔒 Paiement sécurisé</span>
-                    </div>
+                  ))}
+                  <div className={styles.slideDots}>
+                    {heroSlides.map((_, i) => (
+                      <span 
+                        key={i} 
+                        className={`${styles.slideDot} ${i === currentSlide ? styles.dotActive : ''}`}
+                        onClick={() => goToSlide(i)}
+                      />
+                    ))}
                   </div>
                 </div>
               </div>
-            </div>
 
-            {/* Slide indicators */}
-            <div className={styles.slideIndicators}>
-              {heroSlides.map((_, i) => (
-                <button
-                  key={i}
-                  className={`${styles.indicator} ${i === currentSlide ? styles.indicatorActive : ''}`}
-                  onClick={() => goToSlide(i)}
-                  aria-label={`Slide ${i + 1}`}
-                />
-              ))}
-            </div>
+              {/* 3. Right: Account & Small Promos */}
+              <aside className={styles.heroRight}>
+                <div className={styles.accountCard}>
+                  <div className={styles.accountAvatar}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                    </svg>
+                  </div>
+                  <p className={styles.accountWelcome}>Bienvenue sur Tiéba Market</p>
+                  <div className={styles.accountBtns}>
+                    <Link href="/compte" className={styles.btnJoin}>S'inscrire</Link>
+                    <Link href="/compte" className={styles.btnLogin}>Connexion</Link>
+                  </div>
+                </div>
+                
+                <div className={styles.promoCard} style={{ background: '#FFF7ED' }}>
+                  <span className={styles.promoLabel}>Offre Spéciale</span>
+                  <h4>Nouveaux Vendeurs</h4>
+                  <p>0% commission pendant 30 jours</p>
+                  <Link href="/vendeur" className={styles.promoLink}>En savoir plus →</Link>
+                </div>
 
-            {/* Prev / Next */}
-            <button className={`${styles.slideBtn} ${styles.slidePrev}`} onClick={() => goToSlide((currentSlide - 1 + heroSlides.length) % heroSlides.length)} aria-label="Précédent">‹</button>
-            <button className={`${styles.slideBtn} ${styles.slideNext}`} onClick={() => goToSlide((currentSlide + 1) % heroSlides.length)} aria-label="Suivant">›</button>
+                <div className={styles.promoCard} style={{ background: '#ECFDF5' }}>
+                  <span className={styles.promoLabel} style={{ background: '#10B981' }}>B2B</span>
+                  <h4>Sourcing Direct</h4>
+                  <p>Devis gratuit en 24h</p>
+                  <Link href="/sourcing" className={styles.promoLink}>Demander →</Link>
+                </div>
+              </aside>
+
+            </div>
           </div>
         </section>
 
-        {/* ===== PROMO BANNER STRIP ===== */}
+        {/* ===== SERVICE BANNERS (Alibaba Style) ===== */}
         <div className={styles.promoBanners}>
           <div className="container">
             <div className={styles.promoBannerGrid}>
               {[
-                { emoji: '🚀', title: 'Flash Ventes', desc: 'Jusqu\'à -50% aujourd\'hui', color: '#EF4444', href: '/flash' },
-                { emoji: '🌍', title: 'Export Direct', desc: 'Sourcing B2B Afrique & Monde', color: '#16A34A', href: '/sourcing' },
-                { emoji: '🎁', title: 'Offre Bienvenue', desc: '-10% sur votre 1ère commande', color: '#7C3AED', href: '/offre' },
+                { emoji: '🛡️', title: 'Protection Tiéba', desc: 'Sécurité de la commande au paiement', color: '#16A34A', href: '/protection' },
+                { emoji: '🌍', title: 'Sourcing Direct', desc: 'Connectez-vous aux producteurs', color: '#0EA5E9', href: '/sourcing' },
+                { emoji: '✅', title: 'Vendeurs Vérifiés', desc: 'Contrôlés par nos équipes locales', color: '#F59E0B', href: '/fournisseurs' },
               ].map(b => (
                 <Link key={b.title} href={b.href} className={styles.promoBanner} style={{ '--accent': b.color }}>
                   <span className={styles.promoBannerEmoji}>{b.emoji}</span>
@@ -258,9 +243,6 @@ export default function HomePage() {
                     <div className={styles.promoBannerTitle}>{b.title}</div>
                     <div className={styles.promoBannerDesc}>{b.desc}</div>
                   </div>
-                  <svg className={styles.promoBannerArrow} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M5 12h14M12 5l7 7-7 7"/>
-                  </svg>
                 </Link>
               ))}
             </div>

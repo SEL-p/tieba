@@ -70,6 +70,10 @@ export default function Header() {
 
             {/* Search Bar */}
             <div className={styles.searchContainer}>
+              <div className={styles.searchTabs}>
+                <button className={`${styles.searchTab} ${styles.active}`}>Produits</button>
+                <button className={styles.searchTab}>Fournisseurs</button>
+              </div>
               <div className={styles.searchBar}>
                 <select className={styles.categorySelect} aria-label="Catégorie de recherche">
                   <option value="">Tout</option>
@@ -81,23 +85,18 @@ export default function Header() {
                 <input
                   type="text"
                   id="search-input"
-                  placeholder="Rechercher produits, fournisseurs..."
+                  placeholder="Rechercher sur Tiéba Market..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className={styles.searchInput}
                 />
                 <button className={styles.searchBtn} aria-label="Rechercher">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <circle cx="11" cy="11" r="8"/>
                     <path d="M21 21l-4.35-4.35"/>
                   </svg>
+                  <span>Rechercher</span>
                 </button>
-              </div>
-              {/* Quick search tags */}
-              <div className={styles.quickTags}>
-                {['Cacao', 'Noix de cajou', 'Pagne', 'Attiéké', 'Shea butter'].map(tag => (
-                  <button key={tag} className={styles.quickTag} onClick={() => setSearchQuery(tag)}>{tag}</button>
-                ))}
               </div>
             </div>
 

@@ -46,10 +46,12 @@ export default function VendorDashboard() {
         {/* Sidebar */}
         <aside className={styles.sidebar}>
           <div className={styles.sidebarProfile}>
-            <div className={styles.avatar}>YA</div>
+            <div className={styles.avatar}>
+              {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'V'}
+            </div>
             <div>
-              <h3>{vendorData.businessName}</h3>
-              <span className={styles.planBadge}>{vendorData.plan}</span>
+              <h3>{session?.user?.name || 'Vendeur'}</h3>
+              <span className={styles.planBadge}>{vendorData?.plan || 'STARTER'}</span>
             </div>
           </div>
           
@@ -104,7 +106,7 @@ export default function VendorDashboard() {
         <main className={styles.main}>
           <header className={styles.mainHeader}>
             <div>
-              <h1>Bonjour, Yao 👋</h1>
+              <h1>Bonjour, {session?.user?.name ? session.user.name.split(' ')[0] : 'Vendeur'} 👋</h1>
               <p>Voici l'activité de votre boutique aujourd'hui.</p>
             </div>
             <div className={styles.headerActions}>

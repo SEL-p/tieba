@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { featuredProducts, formatPrice } from '../data/mockData';
@@ -39,8 +39,31 @@ const tabs = [
 ];
 
 export default function ComptePage() {
+  const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState('tableau-de-bord');
   const [editMode, setEditMode] = useState(false);
+
+  const user = session?.user || mockUser;
+  const userAvatar = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+
+  if (status === 'loading') return <div className={styles.loading}>Chargement...</div>;
+
+  if (status === 'unauthenticated') {
+    return (
+      <>
+        <Header />
+        <main className={styles.main}>
+          <div className="container" style={{ textAlign: 'center', padding: '100px 0' }}>
+            <h2>Veuillez vous connecter pour accéder à votre compte</h2>
+            <Link href="/api/auth/signin" className="btn btn-primary" style={{ marginTop: '20px' }}>
+              Se connecter
+            </Link>
+          </div>
+        </main>
+        <Footer />
+      </>
+    );
+  }
 
   return (
     <>
@@ -51,11 +74,11 @@ export default function ComptePage() {
             {/* Sidebar */}
             <aside className={styles.sidebar}>
               <div className={styles.userCard}>
-                <div className={styles.avatar}>{mockUser.avatar}</div>
+                <div className={styles.avatar}>{userAvatar}</div>
                 <div className={styles.userInfo}>
-                  <div className={styles.userName}>{mockUser.name}</div>
-                  <div className={styles.userLevel}>{mockUser.level}</div>
-                  <div className={styles.userMember}>Membre depuis {mockUser.memberSince}</div>
+                  <div className={styles.userName}>{user.name}</div>
+                  <div className={styles.userLevel}>{user.role === 'VENDEUR' ? 'Vendeur' : user.role === 'LIVREUR' ? 'Livreur' : 'Acheteur'}</div>
+                  <div className={styles.userMember}>{user.email}</div>
                 </div>
               </div>
 
@@ -88,7 +111,7 @@ export default function ComptePage() {
               {/* DASHBOARD */}
               {activeTab === 'tableau-de-bord' && (
                 <div className={styles.tabContent}>
-                  <h1 className={styles.pageTitle}>Bonjour, {mockUser.name.split(' ')[0]} 👋</h1>
+                  <h1 className={styles.pageTitle}>Bonjour, {user.name.split(' ')[0]} 👋</h1>
                   <p className={styles.pageSubtitle}>Bienvenue sur votre espace personnel Tieba Market.</p>
 
                   {/* Stats */}

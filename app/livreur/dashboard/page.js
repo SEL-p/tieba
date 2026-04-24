@@ -34,9 +34,11 @@ export default function DeliveryDashboard() {
         <div className="container">
           <header className={styles.header}>
             <div className={styles.profile}>
-              <div className={styles.avatar}>MT</div>
+              <div className={styles.avatar}>
+                {session?.user?.name ? session.user.name.charAt(0).toUpperCase() : 'L'}
+              </div>
               <div>
-                <h1>Moussa Traoré</h1>
+                <h1>{session?.user?.name || 'Livreur'}</h1>
                 <div className={styles.statusRow}>
                   <span className={`${styles.statusDot} ${status === 'ACTIF' ? styles.active : ''}`} />
                   <select value={status} onChange={(e) => setStatus(e.target.value)} className={styles.statusSelect}>

@@ -24,6 +24,8 @@ model User {
   seller        Seller?
   cartItems     CartItem[]
   favorites     Favorite[]
+  staffAccount  StaffAccount?
+  sourcingRequests SourcingRequest[]
 }
 
 model Seller {
@@ -39,10 +41,19 @@ model Seller {
   productTypes       String?
   deliveryType       String    @default("TIÉBA")
   subscriptionPlan   String    @default("STARTER")
+  facebookUrl        String?
+  instagramUrl       String?
+  tiktokUrl          String?
+  pixelId            String?
+  facebookAccessToken String?
+  tiktokAccessToken   String?
+  instagramAccessToken String?
   createdAt          DateTime  @default(now())
   updatedAt          DateTime  @updatedAt
   products           Product[]
-  user               User      @relation(fields: [userId], references: [id])
+  user               User           @relation(fields: [userId], references: [id])
+  staffAccounts      StaffAccount[]
+  liveStreams        LiveStream[]
 }
 
 model Livreur {
@@ -91,6 +102,7 @@ model Product {
   category      Category    @relation(fields: [categoryId], references: [id])
   cartItems     CartItem[]
   favoritedBy   Favorite[]
+  liveStreams   LiveStream[]
 }
 
 model Order {
@@ -177,3 +189,66 @@ model Banner {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 }
+
+model StaffAccount {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  sellerId  String
+  shopRole  String   @default("COMMERCIAL") // e.g. MANAGER, COMMERCIAL, SUPPORT
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User     @relation(fields: [userId], references: [id])
+  seller    Seller   @relation(fields: [sellerId], references: [id])
+}
+
+model LiveStream {
+  id             String    @id @default(cuid())
+  sellerId       String
+  title          String
+  description    String?
+  streamUrl      String?   // Lien d'intégration YouTube Live ou Twitch
+  status         String    @default("SCHEDULED") // SCHEDULED, LIVE, ENDED
+  scheduledFor   DateTime?
+  featuredProdId String?   // Produit actuellement mis en avant
+  viewersCount   Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  seller         Seller    @relation(fields: [sellerId], references: [id])
+  product        Product?  @relation(fields: [featuredProdId], references: [id])
+}
+
+model SourcingRequest {
+  id            String   @id @default(cuid())
+  userId        String
+  productName   String
+  category      String
+  quantity      String
+  budget        Float?
+  details       String
+  location      String
+  deadline      DateTime
+  status        String   @default("OPEN") // OPEN, CLOSED, COMPLETED
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  user          User     @relation(fields: [userId], references: [id])
+}
+
+model PromoCode {
+  id              String    @id @default(cuid())
+  code            String    @unique
+  type            String    @default("PERCENTAGE") // PERCENTAGE or FIXED
+  value           Float
+  minOrderAmount  Float?
+  maxDiscount     Float?
+  usageLimit      Int?
+  usageCount      Int       @default(0)
+  expiresAt       DateTime?
+  isActive        Boolean   @default(true)
+  sellerId        String?   // Si null, c'est un code plateforme
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+

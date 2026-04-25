@@ -37,11 +37,24 @@ export const authOptions = {
           throw new Error("Mot de passe incorrect");
         }
 
+        let sellerId = null;
+        let shopRole = null;
+        
+        if (user.role === 'COMMERCIAL') {
+          const staffAcc = await prisma.staffAccount.findUnique({ where: { userId: user.id } });
+          if (staffAcc) {
+            sellerId = staffAcc.sellerId;
+            shopRole = staffAcc.shopRole;
+          }
+        }
+
         return {
           id: user.id,
           name: user.name,
           email: user.email,
           role: user.role,
+          sellerId,
+          shopRole
         };
       }
     })
@@ -51,6 +64,10 @@ export const authOptions = {
       if (user) {
         token.role = user.role;
         token.id = user.id;
+        if (user.sellerId) {
+          token.sellerId = user.sellerId;
+          token.shopRole = user.shopRole;
+        }
       }
       return token;
     },
@@ -58,6 +75,10 @@ export const authOptions = {
       if (token) {
         session.user.role = token.role;
         session.user.id = token.id;
+        if (token.sellerId) {
+          session.user.sellerId = token.sellerId;
+          session.user.shopRole = token.shopRole;
+        }
       }
       return session;
     }

@@ -4,7 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { 
   ShieldCheck, Globe, BadgeCheck, 
-  Leaf, Shirt, Apple, Palette, Gem, Smartphone, Sparkles, Construction,
+  Sprout, Scissors, Soup, Brush, Diamond, Cpu, Activity, Briefcase,
   ChevronRight, User
 } from 'lucide-react';
 import Header from './components/Header';
@@ -154,14 +154,14 @@ export default function HomePage() {
                   {categories.map(cat => (
                     <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.sidebarItem}>
                       <span className={styles.sidebarIcon}>
-                        {cat.id === 'agricole' && <Leaf size={18} />}
-                        {cat.id === 'textile' && <Shirt size={18} />}
-                        {cat.id === 'alimentation' && <Apple size={18} />}
-                        {cat.id === 'artisanat' && <Palette size={18} />}
-                        {cat.id === 'bijoux' && <Gem size={18} />}
-                        {cat.id === 'electronique' && <Smartphone size={18} />}
-                        {cat.id === 'beaute' && <Sparkles size={18} />}
-                        {cat.id === 'batiment' && <Construction size={18} />}
+                        {cat.id === 'agricole' && <Sprout size={18} />}
+                        {cat.id === 'textile' && <Scissors size={18} />}
+                        {cat.id === 'alimentation' && <Soup size={18} />}
+                        {cat.id === 'artisanat' && <Brush size={18} />}
+                        {cat.id === 'bijoux' && <Diamond size={18} />}
+                        {cat.id === 'electronique' && <Cpu size={18} />}
+                        {cat.id === 'beaute' && <Activity size={18} />}
+                        {cat.id === 'batiment' && <Briefcase size={18} />}
                       </span>
                       <span className={styles.sidebarName}>{cat.name}</span>
                       <ChevronRight size={14} className={styles.sidebarArrow} />
@@ -259,46 +259,7 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* ===== CATEGORIES SECTION ===== */}
-        <section className={styles.section} aria-labelledby="categories-title">
-          <div className="container">
-            <div className="section-header">
-              <div>
-                <p className={styles.sectionEyebrow}>Explorer par secteur</p>
-                <h2 className="section-title" id="categories-title">Toutes les Catégories</h2>
-                <div className="divider"></div>
-              </div>
-              <Link href="/categories" className="btn btn-outline btn-sm">
-                Voir tout →
-              </Link>
-            </div>
 
-            <div className={styles.categoriesGrid}>
-              {categories.map((cat) => (
-                <Link key={cat.id} href={`/categories/${cat.id}`} className={styles.categoryCard}>
-                  <div className={styles.categoryImageWrapper}>
-                    <Image src={cat.image} alt={cat.name} fill className={styles.categoryImage} />
-                    <div className={styles.categoryOverlay} />
-                    <div className={styles.categoryIcon}>
-                      {cat.id === 'agricole' && <Leaf size={32} />}
-                      {cat.id === 'textile' && <Shirt size={32} />}
-                      {cat.id === 'alimentation' && <Apple size={32} />}
-                      {cat.id === 'artisanat' && <Palette size={32} />}
-                      {cat.id === 'bijoux' && <Gem size={32} />}
-                      {cat.id === 'electronique' && <Smartphone size={32} />}
-                      {cat.id === 'beaute' && <Sparkles size={32} />}
-                      {cat.id === 'batiment' && <Construction size={32} />}
-                    </div>
-                  </div>
-                  <div className={styles.categoryInfo}>
-                    <h3 className={styles.categoryName}>{cat.name}</h3>
-                    <p className={styles.categoryCount}>{(cat._count?.products || 0).toLocaleString()} produits</p>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ===== FLASH DEALS ===== */}
         <section className={styles.flashSection} aria-labelledby="flash-title">

@@ -10,7 +10,7 @@ export default withAuth(
     if (path.startsWith("/admin") && token?.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
-    if ((path.startsWith("/vendeur/dashboard") || path.startsWith("/vendeur/produits")) && token?.role !== "VENDEUR") {
+    if ((path.startsWith("/vendeur/dashboard") || path.startsWith("/vendeur/produits") || path.startsWith("/vendeur/live")) && token?.role !== "VENDEUR" && token?.role !== "COMMERCIAL") {
       return NextResponse.redirect(new URL("/", req.url));
     }
     if (path.startsWith("/livreur/dashboard") && token?.role !== "LIVREUR") {
@@ -29,6 +29,7 @@ export const config = {
     "/admin/:path*",
     "/vendeur/dashboard/:path*",
     "/vendeur/produits/:path*",
+    "/vendeur/live/:path*",
     "/livreur/dashboard/:path*",
     "/dashboard/:path*",
   ],

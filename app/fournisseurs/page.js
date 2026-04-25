@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Search, ShieldCheck, MapPin, ExternalLink, Award, Users, Package } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { topSuppliers, categories, formatPrice } from '../data/mockData';
@@ -41,20 +42,23 @@ export default function FournisseursPage() {
             </nav>
             <h1 className={styles.title}>Fournisseurs Certifiés</h1>
             <p className={styles.subtitle}>
-              Découvrez les meilleurs fournisseurs ivoiriens vérifiés par Tieba Market.
-              Sourcing direct, qualité garantie.
+              Identifiez et connectez-vous avec les entreprises ivoiriennes les plus performantes. 
+              Sourcing B2B simplifié et vérifié.
             </p>
 
             {/* Stats */}
             <div className={styles.heroStats}>
               {[
-                { val: '3 200+', lbl: 'Fournisseurs actifs' },
-                { val: '98%', lbl: 'Taux de satisfaction' },
-                { val: '15', lbl: 'Pays d\'export' },
-                { val: '24h', lbl: 'Réponse moyenne' },
+                { val: '3 200+', lbl: 'Fournisseurs actifs', icon: <Users size={18} /> },
+                { val: '98%', lbl: 'Confiance client', icon: <ShieldCheck size={18} /> },
+                { val: '15', lbl: 'Pays desservis', icon: <Award size={18} /> },
+                { val: '24h', lbl: 'Réponse moyenne', icon: <Package size={18} /> },
               ].map(s => (
                 <div key={s.lbl} className={styles.heroStat}>
-                  <span className={styles.heroStatVal}>{s.val}</span>
+                  <div className={styles.heroStatHeader}>
+                    {s.icon}
+                    <span className={styles.heroStatVal}>{s.val}</span>
+                  </div>
                   <span className={styles.heroStatLbl}>{s.lbl}</span>
                 </div>
               ))}
@@ -66,12 +70,10 @@ export default function FournisseursPage() {
           {/* Search & Filters */}
           <div className={styles.searchBar}>
             <div className={styles.searchInput}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-              </svg>
+              <Search size={18} className={styles.searchIcon} />
               <input
                 type="text"
-                placeholder="Rechercher un fournisseur..."
+                placeholder="Ex: Huilerie du Sud, Artisanat..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className={styles.searchInputEl}
@@ -94,14 +96,14 @@ export default function FournisseursPage() {
               id="badge-filter"
             >
               <option value="">Tous les niveaux</option>
-              <option value="Platine">Platine</option>
-              <option value="Or">Or</option>
-              <option value="Certifié">Certifié</option>
+              <option value="Platine">Membre Platine</option>
+              <option value="Or">Membre Or</option>
+              <option value="Certifié">Vendeur Certifié</option>
             </select>
           </div>
 
           <p className={styles.resultInfo}>
-            <strong>{filtered.length}</strong> fournisseurs trouvés
+            Nous avons trouvé <strong>{filtered.length}</strong> partenaires potentiels pour vous.
           </p>
 
           {/* Supplier Grid */}
@@ -110,25 +112,29 @@ export default function FournisseursPage() {
               <Link key={supplier.id} href={`/fournisseurs/${supplier.id}`} className={styles.supplierCard} id={`supplier-${supplier.id}`}>
                 <div className={styles.cardHeader}>
                   <div className={styles.avatar} style={{ position: 'relative' }}>
-                    <Image src={supplier.image} alt={supplier.name} fill sizes="72px" style={{ objectFit: 'cover', borderRadius: '12px' }} />
+                    <Image src={supplier.image} alt={supplier.name} fill sizes="72px" style={{ objectFit: 'cover' }} />
                   </div>
                   <div className={styles.supplierInfo}>
-                    <div className={styles.supplierName}>{supplier.name}</div>
-                    <div className={styles.supplierCat}>{supplier.category}</div>
-                    {supplier.verified && <span className="badge badge-green" style={{ fontSize: '10px' }}>✓ Vérifié</span>}
-                  </div>
-                  {supplier.badge && (
-                    <div className={`${styles.levelBadge} ${supplier.badge === 'Platine' ? styles.platine : supplier.badge === 'Or' ? styles.or : styles.certifie}`}>
-                      {supplier.badge === 'Platine' ? '💎' : supplier.badge === 'Or' ? '🥇' : '✅'} {supplier.badge}
+                    <div className={styles.supplierNameRow}>
+                      <h3 className={styles.supplierName}>{supplier.name}</h3>
+                      {supplier.verified && <ShieldCheck size={16} className={styles.verifiedIcon} title="Vérifié par Tiéba" />}
                     </div>
-                  )}
+                    <div className={styles.supplierCat}>{supplier.category}</div>
+                    
+                    {supplier.badge && (
+                      <div className={`${styles.levelBadge} ${supplier.badge === 'Platine' ? styles.platine : supplier.badge === 'Or' ? styles.or : styles.certifie}`}>
+                        <Award size={12} />
+                        <span>{supplier.badge}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Stats */}
                 <div className={styles.statsRow}>
                   <div className={styles.stat}>
-                    <span className={styles.statNum}>{supplier.rating}★</span>
-                    <span className={styles.statLabel}>Note</span>
+                    <span className={styles.statNum}>{supplier.rating}</span>
+                    <span className={styles.statLabel}>Avis</span>
                   </div>
                   <div className={styles.stat}>
                     <span className={styles.statNum}>{supplier.products}</span>
@@ -141,8 +147,14 @@ export default function FournisseursPage() {
                 </div>
 
                 <div className={styles.cardFooter}>
-                  <span className={styles.location}>📍 {supplier.location}</span>
-                  <span className={styles.viewBtn}>Voir la boutique →</span>
+                  <div className={styles.location}>
+                    <MapPin size={14} />
+                    <span>{supplier.location}</span>
+                  </div>
+                  <div className={styles.viewBtn}>
+                    <span>Voir Profil</span>
+                    <ExternalLink size={14} />
+                  </div>
                 </div>
               </Link>
             ))}

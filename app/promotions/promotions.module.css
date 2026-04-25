@@ -1,0 +1,113 @@
+.main {
+  background: var(--gray-50);
+  min-height: 100vh;
+  padding: 40px 0 80px;
+}
+
+.promoHero {
+  background: linear-gradient(135deg, #DC2626 0%, #991B1B 100%);
+  border-radius: var(--radius-xl);
+  padding: 80px 60px;
+  color: white;
+  margin-bottom: 48px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(220, 38, 38, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.heroContent {
+  position: relative;
+  z-index: 2;
+  max-width: 500px;
+}
+
+.timer {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+.timerUnit {
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 12px;
+  border-radius: var(--radius);
+  min-width: 70px;
+  text-align: center;
+}
+
+.timerVal {
+  display: block;
+  font-size: 24px;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+}
+
+.timerLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  font-weight: 600;
+  opacity: 0.8;
+}
+
+.promoHero h1 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 56px;
+  font-weight: 900;
+  line-height: 1;
+  margin-bottom: 20px;
+}
+
+.promoHero p {
+  font-size: 18px;
+  opacity: 0.9;
+}
+
+.flashIcon {
+  font-size: 120px;
+  opacity: 0.2;
+  position: absolute;
+  right: 60px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+}
+
+.emptyState {
+  text-align: center;
+  padding: 100px 0;
+  background: white;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+}
+
+.emptyIcon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 992px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .promoHero { padding: 40px; }
+  .promoHero h1 { font-size: 40px; }
+  .flashIcon { display: none; }
+}
+
+@media (max-width: 640px) {
+  .grid { grid-template-columns: 1fr; }
+  .promoHero { text-align: center; flex-direction: column; }
+  .timer { justify-content: center; }
+}

@@ -4,11 +4,13 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useSession } from 'next-auth/react';
 import { Heart, ShoppingCart, Eye, Star, MapPin, Package, CheckCircle } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import styles from './ProductCard.module.css';
 import { formatPrice } from '../data/mockData';
 
 export default function ProductCard({ product }) {
   const { data: session } = useSession();
+  const { refreshCart, refreshWishlist } = useCart();
   const [wishlist, setWishlist] = useState(false);
   const [adding, setAdding] = useState(false);
   
@@ -23,6 +25,7 @@ export default function ProductCard({ product }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: product.id }),
       });
+      refreshWishlist();
     } catch (err) {
       console.error('Favorite error:', err);
     }
@@ -39,6 +42,7 @@ export default function ProductCard({ product }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ productId: product.id, quantity: 1 }),
       });
+      refreshCart();
       setTimeout(() => setAdding(false), 1500);
     } catch (err) {
       setAdding(false);

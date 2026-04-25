@@ -5,19 +5,21 @@ import { useRouter } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
 import { 
   Search, User, Heart, ShoppingBag, Menu, ChevronDown, 
-  Leaf, Shirt, Apple, Palette, Gem, Smartphone, Sparkles, Construction 
+  Sprout, Scissors, Soup, Brush, Diamond, Cpu, Activity, Home, 
+  Flame, Factory, ClipboardList, Newspaper, Briefcase, Zap
 } from 'lucide-react';
+import { useCart } from '../context/CartContext';
 import styles from './Header.module.css';
 
 const categories = [
-  { name: 'Agricole', icon: <Leaf size={18} />, href: '/categories/agricole' },
-  { name: 'Textile & Pagnes', icon: <Shirt size={18} />, href: '/categories/textile' },
-  { name: 'Alimentation', icon: <Apple size={18} />, href: '/categories/alimentation' },
-  { name: 'Artisanat', icon: <Palette size={18} />, href: '/categories/artisanat' },
-  { name: 'Bijoux', icon: <Gem size={18} />, href: '/categories/bijoux' },
-  { name: 'Électronique', icon: <Smartphone size={18} />, href: '/categories/electronique' },
-  { name: 'Beauté & Santé', icon: <Sparkles size={18} />, href: '/categories/beaute' },
-  { name: 'Bâtiment', icon: <Construction size={18} />, href: '/categories/batiment' },
+  { name: 'Agricole', icon: <Sprout size={18} />, href: '/categories/agricole' },
+  { name: 'Textile & Pagnes', icon: <Scissors size={18} />, href: '/categories/textile' },
+  { name: 'Alimentation', icon: <Soup size={18} />, href: '/categories/alimentation' },
+  { name: 'Artisanat', icon: <Brush size={18} />, href: '/categories/artisanat' },
+  { name: 'Bijoux', icon: <Diamond size={18} />, href: '/categories/bijoux' },
+  { name: 'Électronique', icon: <Cpu size={18} />, href: '/categories/electronique' },
+  { name: 'Beauté & Santé', icon: <Activity size={18} />, href: '/categories/beaute' },
+  { name: 'Bâtiment', icon: <Briefcase size={18} />, href: '/categories/batiment' },
 ];
 
 export default function Header() {
@@ -33,34 +35,7 @@ export default function Header() {
       router.push(`/recherche?q=${encodeURIComponent(searchQuery)}`);
     }
   };
-  const [cartCount, setCartCount] = useState(0);
-  const [cartTotal, setCartTotal] = useState(0);
-  const [wishlistCount, setWishlistCount] = useState(0);
-
-  useEffect(() => {
-    if (session) {
-      // Fetch Cart
-      fetch('/api/cart')
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setCartCount(data.reduce((acc, item) => acc + item.quantity, 0));
-            setCartTotal(data.reduce((acc, item) => acc + (item.product.price * item.quantity), 0));
-          }
-        })
-        .catch(err => console.error(err));
-
-      // Fetch Favorites
-      fetch('/api/favorites')
-        .then(res => res.json())
-        .then(data => {
-          if (Array.isArray(data)) {
-            setWishlistCount(data.length);
-          }
-        })
-        .catch(err => console.error(err));
-    }
-  }, [session]);
+  const { cartCount, cartTotal, wishlistCount } = useCart();
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 10);
@@ -233,14 +208,15 @@ export default function Header() {
             {/* Nav Links */}
             <div className={styles.navLinks}>
               {[
-                { href: '/', label: '🏠 Accueil' },
-                { href: '/nouveautes', label: '✨ Nouveautés' },
-                { href: '/promotions', label: '🔥 Promotions' },
-                { href: '/fournisseurs', label: '🏭 Fournisseurs' },
-                { href: '/sourcing', label: '📋 Sourcing B2B' },
-                { href: '/blog', label: '📰 Actualités' },
+                { href: '/', label: 'Accueil', icon: <Home size={18} /> },
+                { href: '/nouveautes', label: 'Nouveautés', icon: <Zap size={18} /> },
+                { href: '/promotions', label: 'Promotions', icon: <Flame size={18} /> },
+                { href: '/fournisseurs', label: 'Fournisseurs', icon: <Factory size={18} /> },
+                { href: '/sourcing', label: 'Sourcing B2B', icon: <ClipboardList size={18} /> },
+                { href: '/blog', label: 'Actualités', icon: <Newspaper size={18} /> },
               ].map(link => (
                 <Link key={link.href} href={link.href} className={styles.navLink}>
+                  <span style={{ marginRight: '6px', display: 'inline-flex', alignItems: 'center' }}>{link.icon}</span>
                   {link.label}
                 </Link>
               ))}

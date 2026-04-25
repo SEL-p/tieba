@@ -22,8 +22,16 @@ const categories = [
   { name: 'Bâtiment', icon: <Briefcase size={18} />, href: '/categories/batiment' },
 ];
 
+import DeliveryHeader from './DeliveryHeader';
+
 export default function Header() {
   const { data: session } = useSession();
+  
+  // Si c'est un livreur, on affiche le header logistique simplifié partout
+  if (session?.user?.role === 'LIVREUR') {
+    return <DeliveryHeader />;
+  }
+
   const [searchQuery, setSearchQuery] = useState('');
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);

@@ -1,10 +1,11 @@
 'use client';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   ArrowLeft, Save, Info, Image as ImageIcon, Plus, 
-  Trash2, FileText, DollarSign, Package, Truck, CheckCircle2 
+  Trash2, FileText, DollarSign, Package, Truck, CheckCircle2, X
 } from 'lucide-react';
+import Image from 'next/image';
 import Link from 'next/link';
 import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
@@ -31,8 +32,12 @@ export default function NouveauProduit() {
     supplyAbility: '10000 Pièces par Mois',
     leadTime: '7-15 jours',
     packaging: 'Cartons standard d\'exportation',
-    unit: 'Pièce/Pièces'
+    unit: 'Pièce/Pièces',
+    image: ''
   });
+
+  const [imagePreview, setImagePreview] = useState(null);
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     fetch('/api/categories')
@@ -42,6 +47,32 @@ export default function NouveauProduit() {
       })
       .catch(err => console.error(err));
   }, []);
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        alert('L\'image est trop lourde (max 5MB)');
+        return;
+      }
+      
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData(prev => ({ ...prev, image: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const removeImage = () => {
+    setImagePreview(null);
+    setFormData(prev => ({ ...prev, image: '' }));
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -76,6 +107,7 @@ ${formData.description}
         inStock: formData.inStock,
         minOrder: formData.minOrder,
         location: formData.location,
+        image: formData.image || '/placeholder-product.png'
       };
 
       const res = await fetch('/api/products', {
@@ -418,18 +450,34 @@ ${formData.description}
                     <label>Images du produit <span className={styles.req}>*</span></label>
                   </div>
                   <div className={styles.inputCol}>
+                    <input 
+                      type="file" 
+                      ref={fileInputRef} 
+                      onChange={handleImageChange} 
+                      accept="image/*" 
+                      style={{ display: 'none' }} 
+                    />
                     <div className={styles.mediaGrid}>
-                      <div className={styles.mediaUploadBoxMain}>
-                        <ImageIcon size={32} />
-                        <span>Image Principale</span>
-                      </div>
-                      <div className={styles.mediaUploadBox}>
+                      {imagePreview ? (
+                        <div className={styles.mediaPreview}>
+                          <Image src={imagePreview} alt="Preview" fill style={{ objectFit: 'cover', borderRadius: '8px' }} />
+                          <button type="button" className={styles.removeImageBtn} onClick={removeImage}>
+                            <X size={14} />
+                          </button>
+                        </div>
+                      ) : (
+                        <div className={styles.mediaUploadBoxMain} onClick={handleImageClick} style={{ cursor: 'pointer' }}>
+                          <ImageIcon size={32} />
+                          <span>Ajouter l'image</span>
+                        </div>
+                      )}
+                      <div className={styles.mediaUploadBox} onClick={handleImageClick}>
                         <Plus size={24} />
                       </div>
-                      <div className={styles.mediaUploadBox}>
+                      <div className={styles.mediaUploadBox} onClick={handleImageClick}>
                         <Plus size={24} />
                       </div>
-                      <div className={styles.mediaUploadBox}>
+                      <div className={styles.mediaUploadBox} onClick={handleImageClick}>
                         <Plus size={24} />
                       </div>
                     </div>

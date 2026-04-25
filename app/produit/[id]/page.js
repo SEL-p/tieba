@@ -6,7 +6,7 @@ import {
   ShieldCheck, ArrowLeftRight, Lock, 
   Star, MessageCircle, Store, Truck, 
   ChevronRight, Minus, Plus, ShoppingCart, Zap, Heart,
-  MapPin, Package, CheckCircle
+  MapPin, Package, CheckCircle, BadgeCheck
 } from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
@@ -65,7 +65,7 @@ export default function ProduitPage({ params }) {
           <nav className={styles.breadcrumb} aria-label="Fil d'Ariane">
             <Link href="/">Accueil</Link>
             <ChevronRight size={14} />
-            <Link href={`/categories/${product.categoryId}`}>{product.category || 'Catégorie'}</Link>
+            <Link href={`/categories/${product.categoryId}`}>{product.category?.name || 'Catégorie'}</Link>
             <ChevronRight size={14} />
             <span>{product.name}</span>
           </nav>
@@ -240,11 +240,11 @@ export default function ProduitPage({ params }) {
                   <h3>Spécifications</h3>
                   <div className={styles.specTable}>
                     {[
-                      ['Catégorie', product.category],
-                      ['Vendeur', product.seller],
-                      ['Localisation', product.location],
-                      ['Note', `${product.rating}/5 (${product.reviews} avis)`],
-                      ['Vendus', `${product.sales.toLocaleString()} unités`],
+                      ['Catégorie', product.category?.name || 'Général'],
+                      ['Vendeur', product.seller?.businessName || 'Vendeur Tiéba'],
+                      ['Localisation', product.location || 'Côte d\'Ivoire'],
+                      ['Note', `${product.rating || 0}/5 (${product.reviews || 0} avis)`],
+                      ['Vendus', `${(product.sales || 0).toLocaleString()} unités`],
                     ].map(([key, val]) => (
                       <div key={key} className={styles.specRow}>
                         <span className={styles.specKey}>{key}</span>
@@ -258,14 +258,14 @@ export default function ProduitPage({ params }) {
               {activeTab === 'avis' && (
                 <div className={styles.reviewsContent}>
                   <div className={styles.reviewSummary}>
-                    <div className={styles.bigRating}>{product.rating}</div>
+                    <div className={styles.bigRating}>{product.rating || 0}</div>
                     <div>
                       <div className={styles.bigStars}>
                         {[1,2,3,4,5].map(s => (
-                          <span key={s} style={{ color: s <= Math.round(product.rating) ? '#F59E0B' : '#E5E7EB', fontSize: '28px' }}>★</span>
+                          <span key={s} style={{ color: s <= Math.round(product.rating || 0) ? '#F59E0B' : '#E5E7EB', fontSize: '28px' }}>★</span>
                         ))}
                       </div>
-                      <p>{product.reviews.toLocaleString()} avis clients</p>
+                      <p>{(product.reviews || 0).toLocaleString()} avis clients</p>
                     </div>
                   </div>
                   {[
@@ -294,18 +294,18 @@ export default function ProduitPage({ params }) {
                 <div className={styles.vendeurContent}>
                   <div className={styles.vendeurCard}>
                     <div className={styles.vendeurHeader}>
-                      <div className={styles.vendeurLogo}>{product.seller[0]}</div>
+                      <div className={styles.vendeurLogo}>{(product.seller?.businessName || 'T')[0]}</div>
                       <div>
-                        <h3 className={styles.vendeurName}>{product.seller}</h3>
+                        <h3 className={styles.vendeurName}>{product.seller?.businessName || 'Vendeur Tiéba'}</h3>
                         <span className="badge badge-green">✓ Vendeur vérifié</span>
                       </div>
                     </div>
                     <div className={styles.vendeurStats}>
-                      <div className={styles.vendeurStat}><span>{product.rating}</span><small>Note</small></div>
-                      <div className={styles.vendeurStat}><span>{product.reviews}+</span><small>Avis</small></div>
-                      <div className={styles.vendeurStat}><span>{product.sales.toLocaleString()}+</span><small>Ventes</small></div>
+                      <div className={styles.vendeurStat}><span>{product.rating || 0}</span><small>Note</small></div>
+                      <div className={styles.vendeurStat}><span>{product.reviews || 0}+</span><small>Avis</small></div>
+                      <div className={styles.vendeurStat}><span>{(product.sales || 0).toLocaleString()}+</span><small>Ventes</small></div>
                     </div>
-                    <div className={styles.vendeurLocation}>📍 {product.location}, Côte d'Ivoire</div>
+                    <div className={styles.vendeurLocation}>📍 {product.location || 'Côte d\'Ivoire'}</div>
                     <button className="btn btn-primary" style={{ marginTop: '16px', width: '100%' }}>
                       Voir toute la boutique
                     </button>

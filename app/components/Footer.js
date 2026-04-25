@@ -1,11 +1,12 @@
-'use client';
-import Link from 'next/link';
-import { 
-  Truck, Lock, BadgeCheck, RotateCcw, Headset
-} from 'lucide-react';
-import styles from './Footer.module.css';
+import { useSession } from 'next-auth/react';
+import DeliveryFooter from './DeliveryFooter';
 
 export default function Footer() {
+  const { data: session } = useSession();
+
+  if (session?.user?.role === 'LIVREUR') {
+    return <DeliveryFooter />;
+  }
   return (
     <footer className={styles.footer}>
       {/* Trust Badges */}

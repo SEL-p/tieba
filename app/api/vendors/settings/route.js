@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../../auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth';
 
 export async function GET(request) {
   try {
@@ -10,43 +10,30 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Non autorisé' }, { status: 403 });
     }
 
-    const userId = session.user.role === 'COMMERCIAL' ? (await prisma.staffAccount.findUnique({ where: { userId: session.user.id } }))?.seller?.userId : session.user.id;
+    let sellerId = null;
     
-    if (!userId && session.user.role === 'COMMERCIAL') {
-       // Fallback logic to find the seller by ID directly if userId lookup fails
-       const staff = await prisma.staffAccount.findUnique({ 
-         where: { userId: session.user.id },
-         include: { seller: true }
-       });
-       if (!staff?.seller) return NextResponse.json({ error: 'Boutique introuvable' }, { status: 404 });
-       
-       const seller = await prisma.seller.findUnique({
-         where: { id: staff.seller.id },
-         select: {
-           id: true,
-           facebookUrl: true,
-           instagramUrl: true,
-           tiktokUrl: true,
-           pixelId: true,
-           facebookAccessToken: true,
-           instagramAccessToken: true,
-           tiktokAccessToken: true
-         }
-       });
-       return NextResponse.json(seller);
+    if (session.user.role === 'VENDEUR') {
+      const seller = await prisma.seller.findUnique({ where: { userId: session.user.id } });
+      sellerId = seller?.id;
+    } else {
+      const staff = await prisma.staffAccount.findUnique({ 
+        where: { userId: session.user.id }
+      });
+      sellerId = staff?.sellerId;
     }
 
+    if (!sellerId) return NextResponse.json({ error: 'Boutique introuvable' }, { status: 404 });
+
     const seller = await prisma.seller.findUnique({
-      where: { userId: session.user.id },
-      select: {
-        id: true,
-        facebookUrl: true,
-        instagramUrl: true,
-        tiktokUrl: true,
-        pixelId: true,
-        facebookAccessToken: true,
-        instagramAccessToken: true,
-        tiktokAccessToken: true
+      where: { id: sellerId },
+      include: {
+        user: {
+          select: {
+            name: true,
+            email: true,
+            phone: true
+          }
+        }
       }
     });
 

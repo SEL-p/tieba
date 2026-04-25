@@ -60,14 +60,15 @@
   box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.2);
 }
 
-.statusSelect {
-  border: none;
-  background: none;
+.statusDot.busy {
+  background: var(--orange);
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+}
+
+.statusText {
   font-size: 0.875rem;
   color: #64748b;
   font-weight: 600;
-  cursor: pointer;
-  padding: 0;
 }
 
 .headerRight {
@@ -206,6 +207,25 @@
   padding: 12px;
   border-radius: 12px;
   font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.btnChat {
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
 }
 
 .btnSuccess {
@@ -307,3 +327,583 @@
     justify-content: center;
   }
 }
+
+.verificationStatus {
+  margin-right: 20px;
+}
+
+.verifiedBadge {
+  background: rgba(22, 163, 74, 0.1);
+  color: var(--green);
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.unverifiedBadge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.verificationAlert {
+  background: #fff;
+  border: 2px solid #ef4444;
+  border-radius: 20px;
+  padding: 24px;
+  margin-bottom: 32px;
+  box-shadow: 0 10px 15px -3px rgba(239, 68, 68, 0.1);
+}
+
+.alertHeader {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #ef4444;
+  margin-bottom: 12px;
+}
+
+.alertHeader h2 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.verificationAlert p {
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 24px;
+}
+
+.uploadGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.uploadBox {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.uploadBox label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.uploadBox input {
+  font-size: 0.8rem;
+  color: #64748b;
+}
+
+.docDone {
+  color: var(--green);
+  font-weight: 700;
+  font-size: 0.9rem;
+  padding: 8px 0;
+}
+
+/* TABS */
+.tabsNav {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+  background: white;
+  padding: 8px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.tabBtn {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  background: none;
+  border-radius: 8px;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.tabActive {
+  background: #f1f5f9;
+  color: #1e293b;
+}
+
+/* WALLET */
+.walletView {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.walletHeader {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.balanceMain {
+  background: #1e293b;
+  color: white;
+  padding: 30px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.balanceMain h2 {
+  font-size: 2rem;
+  margin: 0;
+}
+
+.payoutFormCard {
+  background: white;
+  padding: 24px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+}
+
+.payoutForm {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr auto;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.payoutForm input, .payoutForm select {
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  outline: none;
+}
+
+.btnAction {
+  background: var(--orange);
+  color: white;
+  border: none;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* PAYOUTS PREMIUM */
+.payoutsList {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.payoutItem {
+  background: white;
+  padding: 20px 24px;
+  border-radius: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+  transition: all 0.2s;
+}
+
+.payoutItem:hover {
+  border-color: #e2e8f0;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+}
+
+.payoutMain h4 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin: 0;
+  color: #1e293b;
+}
+
+.payoutMain p {
+  margin: 4px 0 0 0;
+  font-size: 0.85rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.payoutStatus {
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.payoutStatus.pending { background: #fef3c7; color: #92400e; }
+.payoutStatus.completed { background: #dcfce7; color: #166534; }
+.payoutStatus.rejected { background: #fee2e2; color: #991b1b; }
+
+/* VEHICLE INFO PREMIUM */
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+
+.infoCard {
+  background: white;
+  padding: 30px;
+  border-radius: 28px;
+  box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+  position: relative;
+  overflow: hidden;
+}
+
+.infoCard h3 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin: 0 0 24px 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.vehicleDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.detailItem {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px;
+  background: #f8fafc;
+  border-radius: 16px;
+  border: 1px solid #f1f5f9;
+}
+
+.detailIcon {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6366f1;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.detailText small {
+  display: block;
+  font-size: 0.75rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.detailText p {
+  margin: 2px 0 0 0;
+  font-weight: 800;
+  color: #1e293b;
+  font-size: 1rem;
+}
+
+/* MODAL */
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.modal {
+  background: white;
+  padding: 32px;
+  border-radius: 24px;
+  width: 400px;
+  text-align: center;
+}
+
+.otpInput {
+  width: 100%;
+  padding: 16px;
+  font-size: 2rem;
+  text-align: center;
+  letter-spacing: 12px;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  margin: 20px 0;
+  font-weight: 800;
+}
+
+.modalActions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.btnCancel {
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.btnConfirm {
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  background: var(--green);
+  color: white;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* PERFORMANCE */
+.performanceView {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.chartPlaceholder {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-top: 30px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* REFERRAL PREMIUM */
+.referralCard {
+  background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+  color: white;
+  padding: 32px;
+  border-radius: 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.2);
+}
+
+.referralCard::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 200px;
+  height: 200px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+}
+
+.referralInfo h3 { 
+  font-size: 1.5rem; 
+  font-weight: 800; 
+  margin: 0 0 8px 0; 
+}
+
+.referralInfo p { 
+  margin: 0; 
+  opacity: 0.9; 
+  font-size: 1rem;
+  max-width: 400px;
+}
+
+.codeBox {
+  display: flex;
+  background: rgba(255,255,255,0.2);
+  backdrop-filter: blur(10px);
+  padding: 12px 24px;
+  border-radius: 16px;
+  align-items: center;
+  gap: 20px;
+  border: 1px solid rgba(255,255,255,0.3);
+  z-index: 1;
+}
+
+.codeBox code {
+  font-size: 1.75rem;
+  font-weight: 900;
+  letter-spacing: 4px;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.copyBtn {
+  background: white;
+  color: #6366f1;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.copyBtn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+/* STATS PREMIUM */
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.statCard {
+  background: white;
+  padding: 24px;
+  border-radius: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  border: 1px solid #f1f5f9;
+  transition: transform 0.3s;
+}
+
+.statCard:hover {
+  transform: translateY(-5px);
+}
+
+.statIcon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.statCard h4 {
+  font-size: 1.75rem;
+  font-weight: 900;
+  margin: 0;
+  color: #1e293b;
+}
+
+.statCard p {
+  font-size: 0.9rem;
+  color: #64748b;
+  margin: 4px 0 0 0;
+  font-weight: 600;
+}
+
+/* CHALLENGES PREMIUM */
+.challengesGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.challengeCard {
+  background: white;
+  padding: 28px;
+  border-radius: 24px;
+  border: 1px solid #e2e8f0;
+  position: relative;
+  transition: all 0.3s;
+}
+
+.challengeCard:hover {
+  border-color: #6366f1;
+  box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.1);
+}
+
+.rewardBadge {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: #f0fdf4;
+  color: #166534;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.challengeCard h4 {
+  font-size: 1.25rem;
+  font-weight: 800;
+  margin: 0 0 8px 0;
+  color: #1e293b;
+}
+
+.challengeCard p {
+  color: #64748b;
+  font-size: 0.95rem;
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 12px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: #1e293b;
+}
+
+.progressBar {
+  height: 12px;
+  background: #f1f5f9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: linear-gradient(90deg, #6366f1, #a855f7);
+  border-radius: 6px;
+}
+
+.challengeDone {
+  background: #f8fafc;
+  border-color: #16a34a;
+}
+
+

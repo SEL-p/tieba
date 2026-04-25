@@ -60,13 +60,59 @@ model Livreur {
   id            String            @id @default(cuid())
   userId        String            @unique
   status        String            @default("INACTIF")
-  vehicleType   String?
+  vehicleType   String?           // MOTO, VELO, VOITURE
+  vehiclePlate  String?           // Plaque d'immatriculation
+  phone         String?           // Numéro WhatsApp direct
+  zone          String?           // Zone d'activité (ex: Cocody, Marcory)
   rating        Float             @default(0)
   totalEarnings Float             @default(0)
+  balance       Float             @default(0) // Somme non retirée
+  isVerified    Boolean           @default(false)
+  
+  // Documents de vérification
+  idCardUrl     String?
+  licenseUrl    String?
+  vehicleDocUrl String?
+
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   missions      DeliveryMission[]
+  payouts       Payout[]
+  referralCode  String?           @unique
+  referredById  String?
+  challenges    Bonus[]
   user          User              @relation(fields: [userId], references: [id])
+}
+
+model Challenge {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  targetCount   Int
+  rewardAmount  Float
+  active        Boolean  @default(true)
+  startDate     DateTime @default(now())
+  endDate       DateTime?
+}
+
+model Bonus {
+  id            String   @id @default(cuid())
+  livreurId     String
+  type          String   // REFERRAL, CHALLENGE
+  amount        Float
+  status        String   @default("COMPLETED")
+  description   String?
+  createdAt     DateTime @default(now())
+  livreur       Livreur  @relation(fields: [livreurId], references: [id])
+}
+
+model ChatMessage {
+  id        String   @id @default(cuid())
+  content   String
+  senderId  String
+  orderId   String
+  createdAt DateTime @default(now())
+  order     Order    @relation(fields: [orderId], references: [id])
 }
 
 model Category {
@@ -119,6 +165,7 @@ model Order {
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   mission       DeliveryMission?
+  chatMessages  ChatMessage[]
   user          User             @relation(fields: [userId], references: [id])
   items         OrderItem[]
 }
@@ -137,13 +184,41 @@ model DeliveryMission {
   id              String   @id @default(cuid())
   orderId         String   @unique
   livreurId       String?
-  status          String   @default("WAITING")
+  status          String   @default("WAITING") // WAITING, ACCEPTED, PICKING_UP, DELIVERING, COMPLETED, CANCELLED
+  
   pickupAddress   String?
+  pickupLat       Float?
+  pickupLng       Float?
+  pickupPhoto     String?    // Photo de preuve au ramassage
+  
   deliveryAddress String
+  deliveryLat     Float?
+  deliveryLng     Float?
+  deliveryPhoto   String?    // Photo de preuve à la livraison
+  
+  estimatedTime   Int?       // En minutes
+  distanceKm      Float?
+  
+  completedAt     DateTime?
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+  
+  otpCode         String?    // Code à demander au client pour valider la livraison
+  
   livreur         Livreur? @relation(fields: [livreurId], references: [id])
   order           Order    @relation(fields: [orderId], references: [id])
+}
+
+model Payout {
+  id          String   @id @default(cuid())
+  livreurId   String
+  amount      Float
+  method      String   // Orange Money, Wave, etc.
+  phoneNumber String
+  status      String   @default("PENDING") // PENDING, COMPLETED, REJECTED
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  livreur     Livreur  @relation(fields: [livreurId], references: [id])
 }
 
 model CartItem {

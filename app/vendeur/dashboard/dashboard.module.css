@@ -709,6 +709,23 @@
   .mainHeader {
     flex-direction: column;
     gap: 16px;
-    align-items: flex-start;
   }
+}
+
+.chatIconBtn {
+  background: none;
+  border: 1px solid #e2e8f0;
+  color: var(--orange);
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.chatIconBtn:hover {
+  background: #fff7ed;
+  border-color: var(--orange);
 }

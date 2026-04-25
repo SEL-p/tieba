@@ -87,7 +87,7 @@ export default function PanierPage() {
   };
 
   const subtotal = items.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const delivery = 0; // Everything is included in the price (commission)
+  const delivery = 1500; // Fixed delivery fee
   const promoDiscount = promoApplied ? promoApplied.discount : 0;
   const total = subtotal + delivery - promoDiscount;
 
@@ -148,7 +148,7 @@ export default function PanierPage() {
           subtotal,
           deliveryFee: delivery,
           method: 'MOBILE_MONEY',
-          orderId: `ORD-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+          items: items // Send items so API can create OrderItems and identify pickup
         })
       });
 
@@ -163,13 +163,14 @@ export default function PanierPage() {
           userEmail: session.user.email,
           items: items,
           total: total,
-          paymentMethod: 'Orange/MTN/Wave'
+          paymentMethod: 'Wave'
         };
 
         generateInvoice(orderForInvoice);
         
         // Clear cart
         setItems([]);
+        router.push('/dashboard?tab=commandes&status=success');
       }
     } catch (err) {
       console.error('Checkout error:', err);
@@ -353,27 +354,19 @@ export default function PanierPage() {
 
                   {/* Payment methods */}
                   <div className={styles.paymentInfo}>
-                    <p className={styles.paymentLabel}>Paiements sécurisés via <strong>GeniusPay</strong></p>
+                    <p className={styles.paymentLabel}>Paiement sécurisé via <strong>Wave</strong></p>
                     <div className={styles.paymentMethods}>
-                      <div className={styles.payBadge} title="Orange Money">
-                        <Smartphone size={14} color="#FF6600" />
+                      <div className={`${styles.payBadge} ${styles.payBadgeWave}`} title="Wave">
+                        <Wallet size={16} color="#ffffff" />
+                        <strong>WAVE</strong>
+                      </div>
+                      <div className={styles.payBadgeDisabled} title="Indisponible">
+                        <Smartphone size={14} color="#94a3b8" />
                         <span>Orange</span>
                       </div>
-                      <div className={styles.payBadge} title="MTN MoMo">
-                        <Smartphone size={14} color="#FFCC00" />
+                      <div className={styles.payBadgeDisabled} title="Indisponible">
+                        <Smartphone size={14} color="#94a3b8" />
                         <span>MTN</span>
-                      </div>
-                      <div className={styles.payBadge} title="Wave">
-                        <Wallet size={14} color="#1E90FF" />
-                        <span>Wave</span>
-                      </div>
-                      <div className={styles.payBadge} title="Moov Money">
-                        <Smartphone size={14} color="#005CBB" />
-                        <span>Moov</span>
-                      </div>
-                      <div className={styles.payBadge} title="Visa/Mastercard">
-                        <CreditCard size={14} color="#1A1F71" />
-                        <span>Cartes</span>
                       </div>
                     </div>
                   </div>

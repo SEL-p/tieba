@@ -33,7 +33,9 @@ import {
 } from 'lucide-react';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
+import ChatWindow from '../../components/ChatWindow';
 import styles from './dashboard.module.css';
+import { MessageSquare } from 'lucide-react';
 
 export default function VendorDashboard() {
   const { data: session } = useSession();
@@ -52,6 +54,7 @@ export default function VendorDashboard() {
   });
   const [isSavingSettings, setIsSavingSettings] = useState(false);
   const [sourcingRequests, setSourcingRequests] = useState([]);
+  const [activeChat, setActiveChat] = useState(null);
 
   useEffect(() => {
     if (session?.user?.id) {
@@ -99,18 +102,23 @@ export default function VendorDashboard() {
             }
           }
 
+          const ordersRes = await fetch('/api/orders');
+          const orders = ordersRes.ok ? await ordersRes.json() : [];
+
           setVendorData({
             plan: 'BUSINESS',
-            balance: 1250000,
-            salesCount: 145,
-            activeOrders: 4,
+            balance: products.reduce((acc, p) => acc + (p.price * 0.88), 0), // Simplified balance
+            salesCount: orders.length,
+            activeOrders: orders.filter(o => o.status !== 'DELIVERED').length,
             rating: 4.8,
             products: products,
-            recentOrders: [
-              { id: '1042', customer: 'Moussa Fofana', total: 45000, status: 'En préparation', date: 'Aujourd\'hui' },
-              { id: '1041', customer: 'Awa Koné', total: 12000, status: 'Livré', date: 'Hier' },
-              { id: '1040', customer: 'Jean Koffi', total: 85000, status: 'Expédié', date: 'Hier' }
-            ]
+            recentOrders: orders.map(o => ({
+              id: o.id.substring(0, 8),
+              customer: o.user.name,
+              total: o.total,
+              status: o.status === 'PAID' ? 'En préparation' : o.status === 'DELIVERING' ? 'En transit' : o.status === 'DELIVERED' ? 'Livré' : o.status,
+              date: new Date(o.createdAt).toLocaleDateString()
+            }))
           });
         } catch (err) {
           console.error('Error fetching vendor products:', err);
@@ -259,16 +267,14 @@ export default function VendorDashboard() {
               <Package size={20} />
               <span>Mes Produits</span>
             </button>
-            {session?.user?.id && (
-              <Link 
-                href={`/boutique/${session.user.id}`}
-                className={styles.navItem}
-                style={{ textDecoration: 'none' }}
-              >
-                <Store size={20} />
-                <span>Voir ma boutique</span>
-              </Link>
-            )}
+            <Link 
+              href={`/boutique/${session?.user?.sellerId || socialSettings.id || session?.user?.id}`}
+              className={styles.navItem}
+              style={{ textDecoration: 'none' }}
+            >
+              <Store size={20} />
+              <span>Voir ma boutique</span>
+            </Link>
             <button 
               className={`${styles.navItem} ${activeTab === 'orders' ? styles.active : ''}`}
               onClick={() => setActiveTab('orders')}
@@ -418,6 +424,7 @@ export default function VendorDashboard() {
                             <th>Total</th>
                             <th>Date</th>
                             <th>Statut</th>
+                            <th>Chat</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -428,6 +435,25 @@ export default function VendorDashboard() {
                               <td className={styles.fw600}>{order.total.toLocaleString()} FCFA</td>
                               <td><span className={styles.dateLabel}><Clock size={12} /> {order.date}</span></td>
                               <td><span className={`${styles.statusBadge} ${styles['status' + order.status.replace(/ /g, '')]}`}>{order.status}</span></td>
+                              <td>
+                                <div style={{ display: 'flex', gap: '8px' }}>
+                                  <button 
+                                    onClick={() => setActiveChat({ id: order.id, name: order.customer })}
+                                    className={styles.chatIconBtn}
+                                    title="Chat avec le client"
+                                  >
+                                    <MessageSquare size={14} /> Client
+                                  </button>
+                                  <button 
+                                    onClick={() => setActiveChat({ id: order.id, name: "Livreur" })}
+                                    className={styles.chatIconBtn}
+                                    style={{ color: '#6366f1' }}
+                                    title="Chat avec le livreur"
+                                  >
+                                    <Truck size={14} /> Livreur
+                                  </button>
+                                </div>
+                              </td>
                             </tr>
                           ))}
                         </tbody>
@@ -894,6 +920,13 @@ export default function VendorDashboard() {
           </div>
         </main>
       </div>
+      {activeChat && (
+        <ChatWindow 
+          orderId={activeChat.id} 
+          recipientName={activeChat.name} 
+          onClose={() => setActiveChat(null)} 
+        />
+      )}
     </>
   );
 }

@@ -1,0 +1,243 @@
+.container {
+  background: #f8fafc;
+  min-height: 100vh;
+  padding: 40px 0;
+}
+
+.backLink {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #64748b;
+  text-decoration: none;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.trackingGrid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 32px;
+}
+
+.card {
+  background: white;
+  border-radius: 20px;
+  padding: 32px;
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
+  margin-bottom: 24px;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+}
+
+.cardHeader h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.cardHeader p {
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.statusBadge {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.pending { background: #fef3c7; color: #92400e; }
+.preparing { background: #dcfce7; color: #166534; }
+.in_transit { background: #fff7ed; color: #9a3412; }
+.delivered { background: #dcfce7; color: #166534; }
+
+/* Timeline Styles */
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  position: relative;
+  padding-left: 20px;
+}
+
+.step {
+  display: flex;
+  gap: 24px;
+  position: relative;
+}
+
+.stepIcon {
+  width: 44px;
+  height: 44px;
+  background: #f1f5f9;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
+  z-index: 1;
+  transition: all 0.3s;
+}
+
+.completed .stepIcon {
+  background: var(--green);
+  color: white;
+}
+
+.active .stepIcon {
+  background: var(--orange);
+  color: white;
+  box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.2);
+}
+
+.stepContent h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.stepContent p {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+.currentStatus {
+  color: var(--orange) !important;
+  font-weight: 700;
+}
+
+.line {
+  position: absolute;
+  left: 21px;
+  top: 44px;
+  width: 2px;
+  height: calc(100% - 12px);
+  background: #e2e8f0;
+}
+
+.completed .line {
+  background: var(--green);
+}
+
+/* Sidebar */
+.livreurCard {
+  background: #1e293b;
+  color: white;
+  padding: 24px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+
+.livreurHeader {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.avatar {
+  width: 48px;
+  height: 48px;
+  background: var(--orange);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.livreurHeader h4 { margin: 0; }
+.livreurHeader p { font-size: 0.8rem; opacity: 0.7; margin: 0; }
+
+.livreurInfo {
+  border-top: 1px solid rgba(255,255,255,0.1);
+  padding-top: 20px;
+  margin-bottom: 24px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.callBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: white;
+  color: #1e293b;
+  padding: 14px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: 800;
+  transition: transform 0.2s;
+}
+
+.callBtn:hover { transform: translateY(-2px); }
+
+.chatBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: var(--orange);
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.chatBtn:hover { transform: translateY(-2px); }
+
+.waitingCard {
+  background: white;
+  padding: 32px;
+  border-radius: 20px;
+  text-align: center;
+  border: 2px dashed #e2e8f0;
+  margin-bottom: 20px;
+  color: #64748b;
+}
+
+.helpCard {
+  background: #f1f5f9;
+  padding: 24px;
+  border-radius: 20px;
+}
+
+.helpBtn {
+  display: block;
+  text-align: center;
+  margin-top: 16px;
+  color: #1e293b;
+  font-weight: 700;
+}
+
+.loading {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+@media (max-width: 992px) {
+  .trackingGrid {
+    grid-template-columns: 1fr;
+  }
+}

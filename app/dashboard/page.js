@@ -24,9 +24,12 @@ const mockOrders = [
 ];
 
 const statusConfig = {
-  'Livré': { color: 'var(--green)', bg: 'rgba(22,163,74,0.1)', icon: '✓' },
-  'En transit': { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: '🚚' },
-  'En cours': { color: 'var(--orange)', bg: 'rgba(249,115,22,0.1)', icon: '⏳' },
+  'PAID': { color: 'var(--orange)', bg: 'rgba(249,115,22,0.1)', icon: '💰', label: 'Payé' },
+  'PREPARING': { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: '🏬', label: 'En préparation' },
+  'IN_TRANSIT': { color: '#F59E0B', bg: 'rgba(245,158,11,0.1)', icon: '🚚', label: 'En transit' },
+  'DELIVERED': { color: 'var(--green)', bg: 'rgba(22,163,74,0.1)', icon: '✓', label: 'Livré' },
+  'CANCELLED': { color: '#EF4444', bg: 'rgba(239,68,68,0.1)', icon: '✕', label: 'Annulé' },
+  'PENDING': { color: '#64748b', bg: 'rgba(100,116,139,0.1)', icon: '⏳', label: 'Attente paiement' },
 };
 
 const tabs = [
@@ -42,6 +45,29 @@ export default function ComptePage() {
   const { data: session, status } = useSession();
   const [activeTab, setActiveTab] = useState('tableau-de-bord');
   const [editMode, setEditMode] = useState(false);
+  const [orders, setOrders] = useState([]);
+  const [favorites, setFavorites] = useState([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
+
+  useEffect(() => {
+    if (status === 'authenticated') {
+      const fetchData = async () => {
+        try {
+          const [ordersRes, favsRes] = await Promise.all([
+            fetch('/api/orders'),
+            fetch('/api/favorites')
+          ]);
+          if (ordersRes.ok) setOrders(await ordersRes.json());
+          if (favsRes.ok) setFavorites(await favsRes.json());
+        } catch (err) {
+          console.error("Error fetching dashboard data:", err);
+        } finally {
+          setIsLoadingData(false);
+        }
+      };
+      fetchData();
+    }
+  }, [status]);
 
   const user = session?.user || mockUser;
   const userAvatar = user.name ? user.name.charAt(0).toUpperCase() : 'U';
@@ -135,28 +161,34 @@ export default function ComptePage() {
                   {/* Recent Orders */}
                   <h2 className={styles.sectionTitle}>Commandes récentes</h2>
                   <div className={styles.ordersTable}>
-                    {mockOrders.map(order => {
-                      const conf = statusConfig[order.status];
-                      return (
-                        <div key={order.id} className={styles.orderRow} id={`order-${order.id}`}>
-                          <div className={styles.orderId}>
-                            <span className={styles.orderIdNum}>{order.id}</span>
-                            <span className={styles.orderDate}>{order.date}</span>
+                    {orders.length > 0 ? (
+                      orders.slice(0, 5).map(order => {
+                        const status = order.status === 'PAID' ? 'En cours' : order.status === 'DELIVERING' ? 'En transit' : order.status === 'DELIVERED' ? 'Livré' : order.status;
+                        const conf = statusConfig[status] || { color: '#666', bg: '#eee', icon: '•' };
+                        return (
+                          <div key={order.id} className={styles.orderRow} id={`order-${order.id}`}>
+                            <div className={styles.orderId}>
+                              <span className={styles.orderIdNum}>#{order.id.substring(0, 8)}</span>
+                              <span className={styles.orderDate}>{new Date(order.createdAt).toLocaleDateString()}</span>
+                            </div>
+                            <div>
+                              <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{order.items?.length || 0} articles</span>
+                            </div>
+                            <div
+                              className={styles.statusBadge}
+                              style={{ color: conf.color, background: conf.bg }}
+                            >
+                              {conf.icon} {conf.label || order.status}
+                            </div>
+                            <div className={styles.orderTotal}>{formatPrice(order.total)}</div>
+                            <Link href={`/suivi/${order.id}`} className={styles.trackBtn}>Suivre 🛰️</Link>
+                            <Link href={`/commandes/${order.id}`} className={styles.orderLink}>Détails</Link>
                           </div>
-                          <div>
-                            <span style={{ fontSize: '13px', color: 'var(--text-secondary)' }}>{order.items} articles</span>
-                          </div>
-                          <div
-                            className={styles.statusBadge}
-                            style={{ color: conf.color, background: conf.bg }}
-                          >
-                            {conf.icon} {order.status}
-                          </div>
-                          <div className={styles.orderTotal}>{formatPrice(order.total)}</div>
-                          <Link href={`/commandes/${order.id}`} className={styles.orderLink}>Détails →</Link>
-                        </div>
-                      );
-                    })}
+                        );
+                      })
+                    ) : (
+                      <p style={{ padding: '20px', color: 'var(--text-secondary)' }}>Aucune commande récente.</p>
+                    )}
                   </div>
 
                   {/* Recommended */}
@@ -183,35 +215,35 @@ export default function ComptePage() {
                       </button>
                     ))}
                   </div>
-                  {mockOrders.map(order => {
-                    const conf = statusConfig[order.status];
+                  {orders.length > 0 ? orders.map(order => {
+                    const conf = statusConfig[order.status] || { color: '#666', bg: '#eee', icon: '•' };
                     return (
                       <div key={order.id} className={styles.orderCard}>
                         <div className={styles.orderCardHeader}>
                           <div>
-                            <span className={styles.orderIdNum}>{order.id}</span>
-                            <span className={styles.orderDate} style={{ marginLeft: '12px' }}>{order.date}</span>
+                            <span className={styles.orderIdNum}>#{order.id.slice(0, 8)}</span>
+                            <span className={styles.orderDate} style={{ marginLeft: '12px' }}>{new Date(order.createdAt).toLocaleDateString()}</span>
                           </div>
                           <span className={styles.statusBadge} style={{ color: conf.color, background: conf.bg }}>
-                            {conf.icon} {order.status}
+                            {conf.icon} {conf.label || order.status}
                           </span>
                         </div>
                         <div className={styles.orderCardBody}>
-                          <span>{order.items} article(s)</span>
+                          <span>{order.items?.length || 0} article(s)</span>
                           <span className={styles.orderTotal}>{formatPrice(order.total)}</span>
                         </div>
                         <div className={styles.orderCardFooter}>
-                          <button className="btn btn-ghost btn-sm">Voir les détails</button>
-                          {order.status === 'Livré' && (
+                          <Link href={`/suivi/${order.id}`} className="btn btn-primary btn-sm">Suivre la livraison 🛰️</Link>
+                          <Link href={`/commandes/${order.id}`} className="btn btn-ghost btn-sm">Voir les détails</Link>
+                          {order.status === 'DELIVERED' && (
                             <button className="btn btn-outline btn-sm">↩️ Retourner</button>
                           )}
-                          <button className="btn btn-secondary btn-sm" style={{ marginLeft: 'auto' }}>
-                            🔄 Commander à nouveau
-                          </button>
                         </div>
                       </div>
                     );
-                  })}
+                  }) : (
+                    <div className={styles.emptyState}>Aucune commande trouvée.</div>
+                  )}
                 </div>
               )}
 
@@ -270,19 +302,22 @@ export default function ComptePage() {
                 <div className={styles.tabContent}>
                   <h1 className={styles.pageTitle}>Mes Favoris</h1>
                   <div className={styles.favGrid}>
-                    {featuredProducts.slice(0, 6).map(p => (
-                      <Link key={p.id} href={`/produit/${p.id}`} className={styles.favCard} id={`fav-${p.id}`}>
-                        <div className={styles.favInfo}>
-                          <div className={styles.favName}>{p.name}</div>
-                          <div className={styles.favSeller}>{p.seller}</div>
-                          <div className={styles.favPrice}>{formatPrice(p.price)}</div>
-                        </div>
-                        <div className={styles.favActions}>
-                          <button className="btn btn-primary btn-sm" onClick={e => e.preventDefault()}>Ajouter au panier</button>
-                          <button className={styles.removeFavBtn} onClick={e => e.preventDefault()} aria-label="Retirer des favoris">🗑</button>
-                        </div>
-                      </Link>
-                    ))}
+                    {favorites.length > 0 ? (
+                      favorites.map(fav => (
+                        <Link key={fav.id} href={`/produit/${fav.product.id}`} className={styles.favCard} id={`fav-${fav.id}`}>
+                          <div className={styles.favInfo}>
+                            <div className={styles.favName}>{fav.product.name}</div>
+                            <div className={styles.favPrice}>{formatPrice(fav.product.price)}</div>
+                          </div>
+                          <div className={styles.favActions}>
+                            <button className="btn btn-primary btn-sm" onClick={e => e.preventDefault()}>Ajouter au panier</button>
+                            <button className={styles.removeFavBtn} onClick={e => { e.preventDefault(); /* API Toggle */ }} aria-label="Retirer des favoris">🗑</button>
+                          </div>
+                        </Link>
+                      ))
+                    ) : (
+                      <p>Vous n'avez pas encore de favoris.</p>
+                    )}
                   </div>
                 </div>
               )}

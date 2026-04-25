@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
 import { Construction, ArrowLeft, Home } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
+import Header from './Header';
+import Footer from './Footer';
 
 export default function ComingSoon({ title = "Cette page arrive bientôt" }) {
   return (

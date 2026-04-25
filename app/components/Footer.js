@@ -1,5 +1,14 @@
+import Link from 'next/link';
 import { useSession } from 'next-auth/react';
+import { 
+  Truck, 
+  Lock, 
+  BadgeCheck, 
+  RotateCcw, 
+  Headset 
+} from 'lucide-react';
 import DeliveryFooter from './DeliveryFooter';
+import styles from './Footer.module.css';
 
 export default function Footer() {
   const { data: session } = useSession();

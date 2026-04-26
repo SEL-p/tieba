@@ -5,10 +5,10 @@ import {
   Truck, 
   LogOut, 
   User, 
-  Bell,
   MapPin
 } from 'lucide-react';
-import styles from './Header.module.css'; // Reuse some styles but we'll keep it simple
+import styles from './Header.module.css';
+import NotificationCenter from './NotificationCenter'; // Reuse some styles but we'll keep it simple
 
 export default function DeliveryHeader() {
   const { data: session } = useSession();
@@ -42,10 +42,7 @@ export default function DeliveryHeader() {
             Abidjan, CI
           </div>
           
-          <button style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', position: 'relative' }}>
-            <Bell size={22} />
-            <span style={{ position: 'absolute', top: '-5px', right: '-5px', background: 'red', color: 'white', fontSize: '10px', padding: '2px 5px', borderRadius: '10px' }}>3</span>
-          </button>
+          {session && <NotificationCenter userId={session.user.id} />}
 
           <div style={{ height: '30px', width: '1px', background: 'rgba(255,255,255,0.1)' }} />
 

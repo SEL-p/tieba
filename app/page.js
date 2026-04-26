@@ -48,7 +48,7 @@ function CountdownTimer({ timeLeft }) {
 const heroSlides = [
   {
     id: 1,
-    title: 'La Marketplace\nIvoirienne N°1',
+    title: 'La Plateforme\nIvoirienne Pro',
     subtitle: 'Achetez et vendez des produits authentiques de Côte d\'Ivoire. Cacao, pagnes, artisanat et bien plus.',
     cta: 'Explorer le marché',
     ctaSecondary: 'Devenir vendeur',
@@ -212,7 +212,7 @@ export default function HomePage() {
                   <div className={styles.accountAvatar}>
                     <User size={24} />
                   </div>
-                  <p className={styles.accountWelcome}>Bienvenue sur Tiéba Market</p>
+                  <p className={styles.accountWelcome}>Bienvenue sur Tieba</p>
                   <div className={styles.accountBtns}>
                     <Link href="/inscription" className={styles.btnJoin}>S'inscrire</Link>
                     <Link href="/connexion" className={styles.btnLogin}>Connexion</Link>
@@ -243,7 +243,7 @@ export default function HomePage() {
           <div className="container">
             <div className={styles.promoBannerGrid}>
               {[
-                { icon: <ShieldCheck size={28} />, title: 'Protection Tiéba', desc: 'Sécurité de la commande au paiement', color: '#16A34A', href: '/protection' },
+                { icon: <ShieldCheck size={28} />, title: 'Protection Tieba', desc: 'Sécurité de la commande au paiement', color: '#16A34A', href: '/protection' },
                 { icon: <Globe size={28} />, title: 'Sourcing Direct', desc: 'Connectez-vous aux producteurs', color: '#0EA5E9', href: '/sourcing' },
                 { icon: <BadgeCheck size={28} />, title: 'Vendeurs Vérifiés', desc: 'Contrôlés par nos équipes locales', color: '#F59E0B', href: '/fournisseurs' },
               ].map(b => (
@@ -375,7 +375,7 @@ export default function HomePage() {
           <div className="container">
             <div style={{ textAlign: 'center', marginBottom: '48px' }}>
               <p className={styles.sectionEyebrow}>Pourquoi nous choisir</p>
-              <h2 className="section-title" id="why-title">La Marketplace de Confiance</h2>
+              <h2 className="section-title" id="why-title">La Plateforme de Confiance</h2>
               <div className="divider" style={{ margin: '8px auto 0' }}></div>
             </div>
             <div className={styles.whyGrid}>
@@ -507,7 +507,7 @@ export default function HomePage() {
           <div className="container">
             <div className={styles.ctaInner}>
               <div className={styles.ctaText}>
-                <h2 className={styles.ctaTitle}>Devenez Vendeur sur Tieba Market</h2>
+                <h2 className={styles.ctaTitle}>Devenez Vendeur sur Tieba</h2>
                 <p className={styles.ctaSubtitle}>
                   Rejoignez 3,200+ vendeurs et accédez à des milliers d'acheteurs partout en Côte d'Ivoire et en Afrique.
                   Inscription gratuite, commissions transparentes.

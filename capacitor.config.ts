@@ -5,7 +5,9 @@ const config: CapacitorConfig = {
   appName: 'Tieba Market',
   webDir: 'out',
   server: {
-    androidScheme: 'https'
+    androidScheme: 'https',
+    url: 'http://192.168.1.67:3000',
+    cleartext: true
   }
 };
 

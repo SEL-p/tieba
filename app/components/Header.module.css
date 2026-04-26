@@ -103,10 +103,10 @@
 }
 
 .logoSub {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: var(--orange);
-  letter-spacing: 1.5px;
+  letter-spacing: 0.5px;
   text-transform: uppercase;
 }
 
@@ -502,11 +502,23 @@
 }
 
 @media (max-width: 768px) {
+  .topBanner { display: none; }
+  .header { padding: 8px 0; }
+  .headerInner { gap: 12px; }
+  .logoIcon { width: 32px; height: 32px; }
+  .logoIcon span { font-size: 18px; }
+  .logoMain { font-size: 16px; }
+  .logoSub { display: none; }
+  .searchBtn span { display: none; }
+  .searchBtn { padding: 0 12px; height: 40px; }
+  .searchInput { padding: 8px 10px; font-size: 13px; }
+  .categorySelect { display: none; }
+  .navbar { display: none; }
   .topBannerInner { flex-direction: column; gap: 4px; text-align: center; }
   .actions { display: none; }
   .navLinks { display: none; }
   .navPromo { display: none; }
-  .mobileToggle { display: flex; }
+  .mobileToggle { display: flex; padding: 8px; }
   .searchContainer { max-width: none; }
   .quickTags { display: none; }
 }

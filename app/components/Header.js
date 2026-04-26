@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import styles from './Header.module.css';
+import NotificationCenter from './NotificationCenter';
 
 const categories = [
   { name: 'Agricole', icon: <Sprout size={18} />, href: '/categories/agricole' },
@@ -65,7 +66,7 @@ export default function Header() {
       <div className={styles.topBanner}>
         <div className="container">
           <div className={styles.topBannerInner}>
-            <span>🇨🇮 Livraison dans toute la Côte d'Ivoire &nbsp;|&nbsp; 📞 +225 07 00 00 00 &nbsp;|&nbsp; ✉️ contact@tiebamarket.ci</span>
+            <span>🇨🇮 Livraison dans toute la Côte d'Ivoire &nbsp;|&nbsp; 📞 +225 07 00 00 00 &nbsp;|&nbsp; ✉️ contact@tieba.ci</span>
             <div className={styles.topLinks}>
               {session?.user?.role === 'VENDEUR' && <Link href="/vendeur/dashboard">📊 Dashboard Vendeur</Link>}
               {session?.user?.role === 'LIVREUR' && <Link href="/livreur/dashboard">🚴 Espace Livreur</Link>}
@@ -98,7 +99,7 @@ export default function Header() {
               </div>
               <div className={styles.logoText}>
                 <span className={styles.logoMain}>Tieba</span>
-                <span className={styles.logoSub}>Market</span>
+                <span className={styles.logoSub}>Plateforme</span>
               </div>
             </Link>
 
@@ -149,6 +150,8 @@ export default function Header() {
                   </span>
                 </div>
               </Link>
+
+              {session && <NotificationCenter userId={session.user.id} />}
 
               <Link href="/favoris" className={styles.actionBtn} id="wishlist-link">
                 <div className={styles.actionIconWrapper}>

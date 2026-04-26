@@ -51,7 +51,7 @@ export default function InscriptionPage() {
         <div className={styles.signupCard}>
           <div className={styles.signupHeader}>
             <h1>Rejoignez l'aventure</h1>
-            <p>Choisissez votre profil et commencez sur Tiéba Market</p>
+            <p>Choisissez votre profil et commencez sur Tieba</p>
           </div>
 
           {error && (

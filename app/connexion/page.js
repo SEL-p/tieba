@@ -1,9 +1,9 @@
 'use client';
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { Mail, Lock, Loader2, AlertCircle } from 'lucide-react';
+import { Mail, Lock, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { getSession } from 'next-auth/react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -11,6 +11,8 @@ import styles from './connexion.module.css';
 
 export default function ConnexionPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const isRegistered = searchParams.get('registered') === 'true';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -55,8 +57,15 @@ export default function ConnexionPage() {
         <div className={styles.loginCard}>
           <div className={styles.loginHeader}>
             <h1>Bon retour !</h1>
-            <p>Connectez-vous pour accéder à votre espace Tiéba Market</p>
+            <p>Connectez-vous pour accéder à votre espace Tieba</p>
           </div>
+
+          {isRegistered && (
+            <div className={styles.successBox}>
+              <CheckCircle2 size={20} />
+              <span>Votre compte a été créé avec succès ! Connectez-vous maintenant.</span>
+            </div>
+          )}
 
           {error && (
             <div className={styles.errorBox}>

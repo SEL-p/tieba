@@ -50,12 +50,12 @@ export default function Footer() {
               <div className={styles.footerLogo}>
                 <div className={styles.footerLogoIcon}>T</div>
                 <div>
-                  <div className={styles.footerLogoMain}>Tieba Market</div>
-                  <div className={styles.footerLogoSub}>La Marketplace Ivoirienne N°1</div>
+                  <div className={styles.footerLogoMain}>Tieba</div>
+                  <div className={styles.footerLogoSub}>La Plateforme Ivoirienne Pro</div>
                 </div>
               </div>
               <p className={styles.brandDesc}>
-                Tieba Market connecte les acheteurs et vendeurs ivoiriens à travers une plateforme digitale moderne, sécurisée et accessible à tous.
+                Tieba connecte les acheteurs et vendeurs ivoiriens à travers une plateforme digitale moderne, sécurisée et accessible à tous.
               </p>
               <div className={styles.socialLinks}>
                 {[
@@ -81,7 +81,7 @@ export default function Footer() {
             {/* Links columns */}
             {[
               {
-                title: 'Marketplace',
+                title: 'Plateforme',
                 links: [
                   ['Toutes les catégories', '/categories'],
                   ['Produits populaires', '/populaires'],
@@ -154,7 +154,7 @@ export default function Footer() {
       <div className={styles.bottomBar}>
         <div className="container">
           <div className={styles.bottomInner}>
-            <p>© 2026 Tieba Market. Tous droits réservés. Abidjan, Côte d'Ivoire.</p>
+            <p>© 2026 Tieba. Tous droits réservés. Abidjan, Côte d'Ivoire.</p>
             <div className={styles.bottomLinks}>
               <Link href="/confidentialite">Confidentialité</Link>
               <Link href="/cgv">CGV</Link>

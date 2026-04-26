@@ -100,12 +100,26 @@ export async function PATCH(request) {
           prisma.order.update({
             where: { id: mission.orderId },
             data: { status: 'PREPARING' }
+          }),
+          prisma.notification.create({
+            data: {
+              userId: (await prisma.order.findUnique({ where: { id: mission.orderId } })).userId,
+              title: 'Commande acceptée',
+              message: 'Un livreur a accepté votre commande et se prépare pour le ramassage.',
+              type: 'MISSION',
+              link: `/suivi/${mission.orderId}`
+            }
           })
         ]);
         break;
       
       case 'PICKUP':
         if (mission.status !== 'ACCEPTED') return NextResponse.json({ error: 'Action invalide' }, { status: 400 });
+        const orderPickup = await prisma.order.findUnique({ 
+          where: { id: mission.orderId },
+          include: { items: { include: { product: { include: { seller: true } } } } }
+        });
+
         await prisma.$transaction([
           prisma.deliveryMission.update({
             where: { id: missionId },
@@ -114,6 +128,16 @@ export async function PATCH(request) {
           prisma.order.update({
             where: { id: mission.orderId },
             data: { status: 'IN_TRANSIT' }
+          }),
+          // Notify Customer
+          prisma.notification.create({
+            data: {
+              userId: orderPickup.userId,
+              title: 'En cours de livraison',
+              message: 'Votre colis a été récupéré et est en route !',
+              type: 'MISSION',
+              link: `/suivi/${mission.orderId}`
+            }
           })
         ]);
         break;
@@ -138,24 +162,32 @@ export async function PATCH(request) {
           });
 
           // 2. Update Order Status
-          await tx.order.update({
+          const updatedOrder = await tx.order.update({
             where: { id: mission.orderId },
             data: { status: 'DELIVERED' }
           });
 
-          // 3. Update Livreur Earnings
-          const order = await tx.order.findUnique({ where: { id: mission.orderId } });
-          if (order) {
-            const fees = calculateFees(order.subtotal, order.deliveryFee);
-            const netGain = fees.livreurEarnings;
-            await tx.livreur.update({
-              where: { id: livreur.id },
-              data: {
-                totalEarnings: { increment: netGain },
-                balance: { increment: netGain }
-              }
-            });
-          }
+          // 3. Notify Customer
+          await tx.notification.create({
+            data: {
+              userId: updatedOrder.userId,
+              title: 'Livraison réussie !',
+              message: 'Votre commande a été livrée. Merci de votre confiance.',
+              type: 'MISSION',
+              link: `/suivi/${mission.orderId}`
+            }
+          });
+
+          // 4. Update Livreur Earnings
+          const fees = calculateFees(updatedOrder.subtotal, updatedOrder.deliveryFee);
+          const netGain = fees.livreurEarnings;
+          await tx.livreur.update({
+            where: { id: livreur.id },
+            data: {
+              totalEarnings: { increment: netGain },
+              balance: { increment: netGain }
+            }
+          });
         });
         break;
 

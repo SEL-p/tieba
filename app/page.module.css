@@ -897,20 +897,26 @@
 }
 
 @media (max-width: 768px) {
-  .hero { height: 500px; }
-  .heroInner { flex-direction: column; gap: 24px; }
-  .heroCard { display: none; }
-  .heroTitle { font-size: 32px; }
-  .heroStats { gap: 16px; }
-  .heroStatValue { font-size: 18px; }
-  .categoriesGrid { grid-template-columns: repeat(4, 1fr); }
-  .productsGrid { grid-template-columns: repeat(2, 1fr); }
+  .heroSection { padding: 10px 0; }
+  .heroGrid { grid-template-columns: 1fr; min-height: auto; }
+  .heroSidebar, .heroRight { display: none; }
+  .heroMain { height: 300px; }
+  .heroSlideContent { 
+    padding: 20px; 
+    background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.2) 100%);
+    justify-content: flex-end;
+  }
+  .slideTitle { font-size: 24px; margin-bottom: 12px; }
+  .slideBadge { font-size: 11px; padding: 2px 8px; }
+  .categoriesGrid { grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .productsGrid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
   .flashGrid { grid-template-columns: 1fr; }
   .suppliersGrid { grid-template-columns: 1fr; }
   .whyGrid { grid-template-columns: 1fr; }
   .promoBannerGrid { grid-template-columns: 1fr; }
-  .ctaInner { flex-direction: column; }
-  .ctaTitle { font-size: 26px; }
+  .ctaInner { flex-direction: column; text-align: center; padding: 40px 20px; }
+  .ctaTitle { font-size: 24px; }
+  .ctaBenefits { justify-content: center; }
 }
 
 @media (max-width: 480px) {

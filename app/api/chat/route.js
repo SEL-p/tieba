@@ -53,12 +53,42 @@ export async function POST(request) {
     if (!orderId || !content) return NextResponse.json({ error: 'Données manquantes' }, { status: 400 });
 
     const message = await prisma.chatMessage.create({
-      data: {
-        orderId,
-        content,
-        senderId: session.user.id
-      }
+      data: { orderId, content, senderId: session.user.id }
     });
+
+    // Notify other participants
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+      include: { mission: true, items: { include: { product: { include: { seller: true } } } } }
+    });
+
+    if (order) {
+      const participants = new Set();
+      if (order.userId !== session.user.id) participants.add(order.userId);
+      if (order.mission?.livreurId && order.mission.livreurId !== session.user.id) {
+        const livreur = await prisma.livreur.findUnique({ where: { id: order.mission.livreurId } });
+        if (livreur) participants.add(livreur.userId);
+      }
+      
+      // Get all unique sellers for the items
+      for (const item of order.items) {
+        if (item.product.seller.userId !== session.user.id) {
+          participants.add(item.product.seller.userId);
+        }
+      }
+
+      for (const userId of participants) {
+        await prisma.notification.create({
+          data: {
+            userId,
+            title: 'Nouveau message',
+            message: content.substring(0, 50) + (content.length > 50 ? '...' : ''),
+            type: 'CHAT',
+            link: `/suivi/${orderId}` // Simplification: point to order tracking/dashboard
+          }
+        });
+      }
+    }
 
     return NextResponse.json(message);
   } catch (error) {

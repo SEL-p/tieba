@@ -43,7 +43,7 @@ export default function ComingSoon({ title = "Cette page arrive bientôt" }) {
           </h1>
           
           <p style={{ color: '#64748b', fontSize: '16px', lineHeight: '1.6', marginBottom: '32px' }}>
-            Nos équipes travaillent d'arrache-pied pour vous offrir la meilleure expérience sur cette section de Tiéba Market. Revenez très bientôt !
+            Nos équipes travaillent d'arrache-pied pour vous offrir la meilleure expérience sur cette section de Tieba. Revenez très bientôt !
           </p>
 
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center' }}>

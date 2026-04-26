@@ -205,21 +205,32 @@
   text-decoration: underline;
 }
 
-.footer {
-  margin-top: 32px;
-  text-align: center;
-  font-size: 14px;
-  color: #64748b;
-  padding-top: 24px;
-  border-top: 1px solid #f1f5f9;
-}
-
-.footer a {
-  color: #16a34a;
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.footer a:hover {
-  text-decoration: underline;
+@media (max-width: 600px) {
+  .container {
+    padding: 20px 10px;
+  }
+  .signupCard {
+    padding: 24px 16px;
+    border-radius: 12px;
+  }
+  .signupHeader h1 {
+    font-size: 22px;
+  }
+  .roleGrid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .roleCard {
+    display: flex;
+    align-items: center;
+    text-align: left;
+    padding: 12px 16px;
+    gap: 16px;
+  }
+  .roleIcon {
+    margin-bottom: 0;
+  }
+  .roleDesc {
+    display: none;
+  }
 }
